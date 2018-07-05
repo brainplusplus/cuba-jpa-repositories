@@ -32,7 +32,8 @@ public class SpringDataRepositoryTest {
 
     private Persistence persistence;
     private Metadata metadata;
-    private Repositories repositories;
+    private CustomerRepository customerRepository;
+    private OrderRepository orderRepository;
     private EntityStates entityStates;
 
     private Customer customer1, customer2;
@@ -42,7 +43,8 @@ public class SpringDataRepositoryTest {
     public void setUp() throws Exception {
         persistence = cont.persistence();
         metadata = cont.metadata();
-        repositories = AppBeans.get(Repositories.class);
+        customerRepository = AppBeans.get(CustomerRepository.class);
+        orderRepository = AppBeans.get(OrderRepository.class);
         entityStates = AppBeans.get(EntityStates.class);
 
         customer1 = metadata.create(Customer.class);
@@ -77,13 +79,12 @@ public class SpringDataRepositoryTest {
     @Test
     public void testSave() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
-            CustomerRepository repository = repositories.get(CustomerRepository.class);
 
-            assertNotNull(repository);
+            assertNotNull(customerRepository);
 
             Customer customer = metadata.create(Customer.class);
             customer.setName("customer");
-            repository.save(customer);
+            customerRepository.save(customer);
         }
 
         QueryRunner runner = new QueryRunner(persistence.getDataSource());
@@ -97,8 +98,7 @@ public class SpringDataRepositoryTest {
     public void testFindById() {
         Customer customer;
         try (Transaction tx = persistence.getTransaction()) {
-            CustomerRepository repository = repositories.get(CustomerRepository.class);
-            customer = repository.findOne(customer1.getId());
+            customer = customerRepository.findOne(customer1.getId());
             assertEquals(customer1, customer);
             assertTrue(entityStates.isManaged(customer));
         }
@@ -108,8 +108,7 @@ public class SpringDataRepositoryTest {
     @Test
     public void testFindByProperty() {
         try (Transaction tx = persistence.getTransaction()) {
-            CustomerRepository repository = repositories.get(CustomerRepository.class);
-            Customer customer = repository.findByName(customer1.getName());
+            Customer customer = customerRepository.findByName(customer1.getName());
             assertEquals(customer1, customer);
         }
     }
@@ -117,8 +116,7 @@ public class SpringDataRepositoryTest {
     @Test
     public void testFindByPropertyOfEmbedded() {
         try (Transaction tx = persistence.getTransaction()) {
-            CustomerRepository repository = repositories.get(CustomerRepository.class);
-            List<Customer> customers = repository.findByAddressCity(customer1.getAddress().getCity());
+            List<Customer> customers = customerRepository.findByAddressCity(customer1.getAddress().getCity());
             assertEquals(1, customers.size());
             assertEquals(customer1, customers.get(0));
         }
@@ -127,8 +125,7 @@ public class SpringDataRepositoryTest {
     @Test
     public void testQueryWithAdvancedLike() {
         try (Transaction tx = persistence.getTransaction()) {
-            CustomerRepository repository = repositories.get(CustomerRepository.class);
-            List<Customer> customers = repository.findByNameStartingWith("cust");
+            List<Customer> customers = customerRepository.findByNameStartingWith("cust");
             assertEquals(1, customers.size());
             assertEquals(customer1, customers.get(0));
         }
@@ -137,8 +134,7 @@ public class SpringDataRepositoryTest {
     @Test
     public void testFindByAssociationProperty() {
         try (Transaction tx = persistence.getTransaction()) {
-            OrderRepository repository = repositories.get(OrderRepository.class);
-            List<Order> orders = repository.findByCustomer(customer1);
+            List<Order> orders = orderRepository.findByCustomer(customer1);
             assertEquals(1, orders.size());
             assertEquals(order1, orders.get(0));
         }
