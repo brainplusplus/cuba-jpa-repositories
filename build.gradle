@@ -89,7 +89,7 @@ configure(coreModule) {
         provided(servletApi)
         jdbc(hsql)
         testRuntime(hsql)
-        compile('org.springframework.data:spring-data-commons:1.11.13.RELEASE') {
+        compile(group: 'org.springframework.data', name: 'spring-data-commons', version: '1.13.13.RELEASE') {
             exclude(group: 'org.hibernate', module: 'hibernate-core')
             exclude(group: 'org.springframework', module: 'spring-context')
             exclude(group: 'org.springframework', module: 'spring-core')
