@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service(OrderService.NAME)
@@ -18,6 +19,9 @@ public class OrderServiceBean implements OrderService {
     @Override
     @Transactional
     public List<Order> getOrdersForCustomer(Customer customer) {
-        return orderRepository.findByCustomer(customer);
+        Iterable<Order> orderIterable = orderRepository.findAll();
+        List<Order> orders = new ArrayList<>();
+        orderIterable.forEach(orders::add);
+        return orders;
     }
 }

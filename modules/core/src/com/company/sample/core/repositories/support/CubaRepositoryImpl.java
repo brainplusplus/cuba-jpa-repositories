@@ -3,43 +3,48 @@ package com.company.sample.core.repositories.support;
 import com.company.sample.core.repositories.CubaRepository;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.entity.Entity;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import org.apache.commons.lang.NotImplementedException;
+import org.springframework.context.annotation.Conditional;
 
 import java.io.Serializable;
 
+@Conditional(ConditionFalse.class)
 public class CubaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> implements CubaRepository<T, ID> {
 
-    private Persistence persistence;
     private Class<T> domainClass;
-    private DataManager dataManager;
 
-
-
-    public CubaRepositoryImpl(Class<T> domainClass, Persistence persistence, DataManager dataManager) {
-        this.persistence = persistence;
+    public CubaRepositoryImpl(Class<T> domainClass) {
         this.domainClass = domainClass;
-        this.dataManager = dataManager;
+    }
+
+    public Persistence getPersistence() {
+        return AppBeans.get(Persistence.class);
+    }
+
+    public DataManager getDataManager() {
+        return AppBeans.get(DataManager.class);
     }
 
     @Override
     public T findOne(ID id, String view) {
-        return persistence.getEntityManager().find(domainClass, id, view);
+        return getPersistence().getEntityManager().find(domainClass, id, view);
     }
 
     @Override
     public Iterable<T> findAll(String view) {
-        return dataManager.load(domainClass).view(view).list();
+        return getDataManager().load(domainClass).view(view).list();
     }
 
     @Override
     public Iterable<T> findAll(Iterable<ID> ids, String view) {
-        throw new NotImplementedException();
+        return getDataManager().load(domainClass).view(view).list();
     }
 
     @Override
     public <S extends T> S save(S entity) {
-        return persistence.getEntityManager().merge(entity);
+        return getPersistence().getEntityManager().merge(entity);
     }
 
     @Override
@@ -49,17 +54,17 @@ public class CubaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> i
 
     @Override
     public T findOne(ID id) {
-        return persistence.getEntityManager().find(domainClass, id, "_local");
+        return getPersistence().getEntityManager().find(domainClass, id, "_local");
     }
 
     @Override
     public boolean exists(ID id) {
-        return dataManager.load(domainClass).id(id).optional().isPresent();
+        return getDataManager().load(domainClass).id(id).optional().isPresent();
     }
 
     @Override
     public Iterable<T> findAll() {
-        return dataManager.load(domainClass).view("_local").list();
+        return getDataManager().load(domainClass).view("_local").list();
     }
 
     @Override
@@ -69,7 +74,7 @@ public class CubaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> i
 
     @Override
     public long count() {
-        return dataManager.load(domainClass).view("_local").list().size();
+        return getDataManager().load(domainClass).view("_local").list().size();
     }
 
     @Override
@@ -79,12 +84,12 @@ public class CubaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> i
 
     @Override
     public void delete(T entity) {
-        persistence.getEntityManager().remove(entity);
+        getPersistence().getEntityManager().remove(entity);
     }
 
     @Override
     public void delete(Iterable<? extends T> entities) {
-        entities.forEach(persistence.getEntityManager()::remove);
+        entities.forEach(getPersistence().getEntityManager()::remove);
     }
 
     @Override
