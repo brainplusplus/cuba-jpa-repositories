@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Ignite query generator for Spring Data framework.
  */
-public class CubaQueryGenerator {
+public final class JpqlQueryGenerator {
 
     public static JpqlMetadata getSqlString(RepositoryMetadata metadata, PartTree parts) {
         StringBuilder sql = new StringBuilder();

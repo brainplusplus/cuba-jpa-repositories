@@ -1,12 +1,13 @@
 package com.company.sample.core.repositories;
 
+import com.company.sample.core.repositories.config.CubaJpaRepository;
 import com.company.sample.entity.Customer;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface CustomerRepository extends CubaRepository<Customer, UUID> {
+public interface CustomerRepository extends CubaJpaRepository<Customer, UUID> {
 
     List<Customer> findByName(String name);
 

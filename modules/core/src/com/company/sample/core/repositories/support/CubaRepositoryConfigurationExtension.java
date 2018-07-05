@@ -1,6 +1,6 @@
 package com.company.sample.core.repositories.support;
 
-import com.company.sample.core.repositories.CubaRepository;
+import com.company.sample.core.repositories.config.CubaJpaRepository;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 
 import java.util.Collection;
@@ -36,6 +36,6 @@ public class CubaRepositoryConfigurationExtension extends RepositoryConfiguratio
      */
     @Override
     protected Collection<Class<?>> getIdentifyingTypes() {
-        return Collections.<Class<?>>singleton(CubaRepository.class);
+        return Collections.<Class<?>>singleton(CubaJpaRepository.class);
     }
 }

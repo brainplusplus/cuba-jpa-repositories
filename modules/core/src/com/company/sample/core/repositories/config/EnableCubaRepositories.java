@@ -1,7 +1,7 @@
-package com.company.sample.core.repositories;
+package com.company.sample.core.repositories.config;
 
 import com.company.sample.core.repositories.support.CubaRepositoryFactoryBean;
-import com.company.sample.core.repositories.support.CubaRepositoryImpl;
+import com.company.sample.core.repositories.support.CubaJpaRepositoryImpl;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.repository.query.QueryLookupStrategy;
@@ -91,7 +91,7 @@ public @interface EnableCubaRepositories {
      *
      * @return Repository base class to be used to create repository proxies for this particular configuration.
      */
-    Class<?> repositoryBaseClass() default CubaRepositoryImpl.class;
+    Class<?> repositoryBaseClass() default CubaJpaRepositoryImpl.class;
 
     /**
      * Configures whether nested repository-interfaces (e.g. defined as inner classes) should be discovered by the

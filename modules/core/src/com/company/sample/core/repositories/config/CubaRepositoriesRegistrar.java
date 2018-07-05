@@ -1,4 +1,4 @@
-package com.company.sample.core.repositories;
+package com.company.sample.core.repositories.config;
 
 import com.company.sample.core.repositories.support.CubaRepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport;

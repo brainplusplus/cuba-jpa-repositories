@@ -25,7 +25,7 @@ public class CubaRepositoryFactory extends RepositoryFactorySupport {
 
     @Override
     protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-        return CubaRepositoryImpl.class;
+        return CubaJpaRepositoryImpl.class;
     }
 
 

@@ -39,8 +39,9 @@ public class CubaQuery implements RepositoryQuery {
     @Override
     public Object execute(Object[] parameters) {
         log.info(String.format("Query: \"%s\" Parameters: \"%s\"", jpql, Arrays.toString(parameters)));
-        Query query = getPersistence().getEntityManager().createQuery(jpql.getJpql());
-        Assert.isTrue(parameters.length == jpql.getParameterNames().size(), "Parameters in JPQL and parameters in method are not equal");
+        Query query = getPersistence().getEntityManager().createQuery(jpql.getJpql()); //TODO Cache this query
+        Assert.isTrue(parameters.length == jpql.getParameterNames().size(),
+                "Parameters list sizes in JPQL and in method are not equal: Method: "+Arrays.toString(parameters)+" JPQL: "+jpql.getParameterNames());
         for (int i = 0; i < parameters.length; i++){
             query.setParameter(jpql.getParameterNames().get(i), parameters[i]);
         }
@@ -49,7 +50,7 @@ public class CubaQuery implements RepositoryQuery {
 
     public JpqlMetadata generateQueryMetadata() {
         PartTree qryTree = new PartTree(method.getName(), metadata.getDomainType());
-        return CubaQueryGenerator.getSqlString(metadata, qryTree);
+        return JpqlQueryGenerator.getSqlString(metadata, qryTree);
     }
 
     @Override

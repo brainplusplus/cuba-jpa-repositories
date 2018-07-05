@@ -1,6 +1,6 @@
 package com.company.sample.core.repositories.support;
 
-import com.company.sample.core.repositories.CubaRepository;
+import com.company.sample.core.repositories.config.CubaJpaRepository;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.AppBeans;
@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Conditional;
 import java.io.Serializable;
 
 @Conditional(ConditionFalse.class) //@NoRepositoryBean doesn't work
-public class CubaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> implements CubaRepository<T, ID> {
+public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> implements CubaJpaRepository<T, ID> {
 
     private Class<T> domainClass;
 
-    public CubaRepositoryImpl(Class<T> domainClass) {
+    public CubaJpaRepositoryImpl(Class<T> domainClass) {
         this.domainClass = domainClass;
     }
 

@@ -12,6 +12,9 @@ public class CubaQueryLookupStrategy implements QueryLookupStrategy {
 
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
+
+        //TODO Create query depending on method or annotation
+
         return new CubaQuery(method, metadata, factory, namedQueries);
     }
 }
