@@ -1,6 +1,7 @@
 package com.company.sample.core.repositories.query;
 
 import com.haulmont.cuba.core.Persistence;
+import com.haulmont.cuba.core.Query;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import org.apache.commons.logging.Log;
@@ -11,8 +12,10 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.parser.PartTree;
+import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class CubaQuery implements RepositoryQuery {
 
@@ -23,21 +26,30 @@ public class CubaQuery implements RepositoryQuery {
     private final ProjectionFactory factory;
     private final NamedQueries namedQueries;
 
-    private PartTree qryTree;
+    private JpqlMetadata jpql;
 
     public CubaQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
         this.method = method;
         this.metadata = metadata;
         this.factory = factory;
         this.namedQueries = namedQueries;
-        qryTree = new PartTree(method.getName(), metadata.getDomainType());
+        jpql = generateQueryMetadata();
     }
 
     @Override
     public Object execute(Object[] parameters) {
-        String sqlString = CubaQueryGenerator.getSqlString(metadata, qryTree);
-        log.info(sqlString);
-        return getPersistence().getEntityManager().createQuery(sqlString).setParameter(0, parameters[0]).getResultList();
+        log.info(String.format("Query: \"%s\" Parameters: \"%s\"", jpql, Arrays.toString(parameters)));
+        Query query = getPersistence().getEntityManager().createQuery(jpql.getJpql());
+        Assert.isTrue(parameters.length == jpql.getParameterNames().size(), "Parameters in JPQL and parameters in method are not equal");
+        for (int i = 0; i < parameters.length; i++){
+            query.setParameter(jpql.getParameterNames().get(i), parameters[i]);
+        }
+        return query.getResultList();
+    }
+
+    public JpqlMetadata generateQueryMetadata() {
+        PartTree qryTree = new PartTree(method.getName(), metadata.getDomainType());
+        return CubaQueryGenerator.getSqlString(metadata, qryTree);
     }
 
     @Override

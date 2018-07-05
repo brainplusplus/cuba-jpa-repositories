@@ -23,29 +23,33 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 
+import javax.persistence.Entity;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Ignite query generator for Spring Data framework.
  */
 public class CubaQueryGenerator {
 
-    public static String getSqlString(RepositoryMetadata metadata, PartTree parts) {
+    public static JpqlMetadata getSqlString(RepositoryMetadata metadata, PartTree parts) {
         StringBuilder sql = new StringBuilder();
+        List<String> parameters = new ArrayList<>();
+        String alias = getEntityClassName(metadata);
 
-        if (parts.isDelete())
-            throw new UnsupportedOperationException("DELETE clause is not supported now.");
+        sql.append("SELECT ");
+
+        if (parts.isDistinct())
+            throw new UnsupportedOperationException("DISTINCT clause in not supported.");
+
+        if (parts.isCountProjection())
+            sql.append("COUNT(1) ");
         else {
-            sql.append("SELECT ");
-
-            if (parts.isDistinct())
-                throw new UnsupportedOperationException("DISTINCT clause in not supported.");
-
-            if (parts.isCountProjection())
-                sql.append("COUNT(1) ");
-            else
-                sql.append(" * ");
+            sql.append(" ").append(alias).append(" ");
         }
 
-        sql.append("FROM ").append(metadata.getDomainType().getSimpleName());
+        Entity annotation = metadata.getDomainType().getAnnotation(Entity.class);
+        sql.append("FROM ").append(annotation.name()).append(" ").append(alias);
 
         if (parts.iterator().hasNext()) {
             sql.append(" WHERE ");
@@ -53,7 +57,7 @@ public class CubaQueryGenerator {
             for (PartTree.OrPart orPart : parts) {
                 sql.append("(");
                 for (Part part : orPart) {
-                    handleQueryPart(sql, part);
+                    handleQueryPart(sql, part, parameters);
                     sql.append(" AND ");
                 }
 
@@ -71,13 +75,17 @@ public class CubaQueryGenerator {
             sql.append(" LIMIT ");
             sql.append(parts.getMaxResults().intValue());
         }
-        return sql.toString();
+        return new JpqlMetadata(sql.toString(), parameters);
+    }
+
+    public static String getEntityClassName(RepositoryMetadata metadata) {
+        return metadata.getDomainType().getSimpleName();
     }
 
     /**
      * Add a dynamic part of query for the sorting support.
      *
-     * @param sql SQL text string.
+     * @param sql  SQL text string.
      * @param sort Sort method.
      */
     public static StringBuilder addSorting(StringBuilder sql, Sort sort) {
@@ -110,7 +118,7 @@ public class CubaQueryGenerator {
     /**
      * Add a dynamic part of a query for the pagination support.
      *
-     * @param sql Builder instance.
+     * @param sql      Builder instance.
      * @param pageable Pageable instance.
      * @return Builder instance.
      */
@@ -126,29 +134,31 @@ public class CubaQueryGenerator {
     /**
      * Transform part to sql expression
      */
-    private static void handleQueryPart(StringBuilder sql, Part part) {
+    private static void handleQueryPart(StringBuilder sql, Part part, List<String> parameters) {
         sql.append("(");
 
         sql.append(part.getProperty());
 
         switch (part.getType()) {
             case SIMPLE_PROPERTY:
-                sql.append("=?");
+                String paramName = part.getProperty().getLeafProperty().getSegment();
+                sql.append(" = :").append(paramName);
+                parameters.add(paramName);
                 break;
             case NEGATING_SIMPLE_PROPERTY:
-                sql.append("<>?");
+                sql.append("<> ?");
                 break;
             case GREATER_THAN:
-                sql.append(">?");
+                sql.append("> ?");
                 break;
             case GREATER_THAN_EQUAL:
-                sql.append(">=?");
+                sql.append(">= ?");
                 break;
             case LESS_THAN:
-                sql.append("<?");
+                sql.append("< ?");
                 break;
             case LESS_THAN_EQUAL:
-                sql.append("<=?");
+                sql.append("<= ?");
                 break;
             case IS_NOT_NULL:
                 sql.append(" IS NOT NULL");

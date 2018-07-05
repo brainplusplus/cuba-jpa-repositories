@@ -108,8 +108,9 @@ public class SpringDataRepositoryTest {
     @Test
     public void testFindByProperty() {
         try (Transaction tx = persistence.getTransaction()) {
-            Customer customer = customerRepository.findByName(customer1.getName());
-            assertEquals(customer1, customer);
+            List<Customer> customers = customerRepository.findByName(customer1.getName());
+            assertEquals(1, customers.size());
+            assertEquals(customer1, customers.get(0));
         }
     }
 

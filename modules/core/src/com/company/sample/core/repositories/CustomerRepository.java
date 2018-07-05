@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface CustomerRepository extends CubaRepository<Customer, UUID> {
 
-    Customer findByName(String name);
+    List<Customer> findByName(String name);
 
     List<Customer> findByAddressCity(String city);
 
