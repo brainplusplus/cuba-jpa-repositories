@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Conditional;
 
 import java.io.Serializable;
 
-@Conditional(ConditionFalse.class)
+@Conditional(ConditionFalse.class) //@NoRepositoryBean doesn't work
 public class CubaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> implements CubaRepository<T, ID> {
 
     private Class<T> domainClass;
