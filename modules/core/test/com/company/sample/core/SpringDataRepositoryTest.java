@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -129,6 +131,7 @@ public class SpringDataRepositoryTest {
     public void testQueryWithAdvancedLike() {
         try (Transaction tx = persistence.getTransaction()) {
             List<Customer> customers = customerRepository.findByNameStartingWith("cust");
+            assertFalse(CollectionUtils.isEmpty(customers));
             assertEquals(1, customers.size());
             assertEquals(customer1, customers.get(0));
         }

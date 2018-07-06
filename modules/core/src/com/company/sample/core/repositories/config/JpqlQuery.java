@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JpaQuery {
+public @interface JpqlQuery {
 
     /**
      * JPA query string

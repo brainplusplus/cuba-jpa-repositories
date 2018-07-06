@@ -3,54 +3,55 @@ package com.company.sample.core.repositories.query;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Query;
 import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.projection.ProjectionFactory;
-import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
-import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class CubaQuery implements RepositoryQuery {
+public class CubaJpqlQuery implements RepositoryQuery {
 
-    private static final Log log = LogFactory.getLog(CubaQuery.class.getName());
+
+    private static final Log log = LogFactory.getLog(CubaJpqlQuery.class.getName());
 
     private final Method method;
     private final RepositoryMetadata metadata;
     private final ProjectionFactory factory;
-    private final NamedQueries namedQueries;
 
     private JpqlMetadata jpql;
 
-    public CubaQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
+    public CubaJpqlQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, String query) {
         this.method = method;
         this.metadata = metadata;
         this.factory = factory;
-        this.namedQueries = namedQueries;
-        jpql = generateQueryMetadata();
+        List<String> parameters = new ArrayList<>();
+        int position = 1;
+        Matcher m = Pattern.compile("(\\?[1-9]+[0-9]*)").matcher(query);
+        while (m.find()){
+            parameters.add(Integer.toString(position));
+            position++;
+        }
+        jpql = new JpqlMetadata(query, parameters, true);
     }
 
     @Override
     public Object execute(Object[] parameters) {
-        log.info(String.format("Query: \"%s\" Parameters: \"%s\"", jpql, Arrays.toString(parameters)));
-        Query query = getPersistence().getEntityManager().createQuery(jpql.getJpql()); //TODO Cache this query
+        Query query = getPersistence().getEntityManager().createQuery(jpql.getJpql());
         Assert.isTrue(parameters.length == jpql.getParameterNames().size(),
                 "Parameters list sizes in JPQL and in method are not equal: Method: "+Arrays.toString(parameters)+" JPQL: "+jpql.getParameterNames());
         for (int i = 0; i < parameters.length; i++){
-            query.setParameter(jpql.getParameterNames().get(i), parameters[i], false);
+            query.setParameter(Integer.parseInt(jpql.getParameterNames().get(i)), parameters[i], false);
         }
         return query.getResultList();
-    }
-
-    public JpqlMetadata generateQueryMetadata() {
-        PartTree qryTree = new PartTree(method.getName(), metadata.getDomainType());
-        return JpqlQueryGenerator.getSqlString(metadata, qryTree);
     }
 
     @Override
@@ -58,13 +59,9 @@ public class CubaQuery implements RepositoryQuery {
         return new QueryMethod(method, metadata, factory);
     }
 
+
     public Persistence getPersistence() {
         return AppBeans.get(Persistence.class);
     }
-
-    public DataManager getDataManager() {
-        return AppBeans.get(DataManager.class);
-    }
-
 
 }

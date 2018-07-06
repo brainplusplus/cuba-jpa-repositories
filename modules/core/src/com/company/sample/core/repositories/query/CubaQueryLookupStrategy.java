@@ -1,5 +1,6 @@
 package com.company.sample.core.repositories.query;
 
+import com.company.sample.core.repositories.config.JpqlQuery;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -13,8 +14,14 @@ public class CubaQueryLookupStrategy implements QueryLookupStrategy {
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
 
-        //TODO Create query depending on method or annotation
+        JpqlQuery jpqlQuery = method.getDeclaredAnnotation(JpqlQuery.class);
+        if (jpqlQuery != null){
+            String qryString = jpqlQuery.value();
+            return new CubaJpqlQuery(method, metadata, factory, qryString);
+        } else {
+            return new CubaListQuery(method, metadata, factory, namedQueries);
+        }
 
-        return new CubaQuery(method, metadata, factory, namedQueries);
+
     }
 }

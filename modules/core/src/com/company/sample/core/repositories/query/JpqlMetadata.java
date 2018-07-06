@@ -7,10 +7,12 @@ public class JpqlMetadata {
 
     private String jpql;
     private List<String> parameterNames;
+    private boolean ordinal;
 
-    public JpqlMetadata(String jpql, List<String> parameterNames) {
+    public JpqlMetadata(String jpql, List<String> parameterNames, boolean ordinal) {
         this.jpql = jpql;
         this.parameterNames = parameterNames;
+        this.ordinal = ordinal;
     }
 
     public String getJpql() {
@@ -19,6 +21,10 @@ public class JpqlMetadata {
 
     public List<String> getParameterNames() {
         return Collections.unmodifiableList(parameterNames);
+    }
+
+    public boolean isOrdinal() {
+        return ordinal;
     }
 
     @Override

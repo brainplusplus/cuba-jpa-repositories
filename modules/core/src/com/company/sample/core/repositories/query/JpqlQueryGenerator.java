@@ -75,7 +75,7 @@ public final class JpqlQueryGenerator {
             sql.append(" LIMIT ");
             sql.append(parts.getMaxResults().intValue());
         }
-        return new JpqlMetadata(sql.toString(), parameters);
+        return new JpqlMetadata(sql.toString(), parameters, false);
     }
 
     public static String getEntityClassName(RepositoryMetadata metadata) {
