@@ -1,8 +1,10 @@
 package com.company.sample.core.repositories.query;
 
-import com.haulmont.cuba.core.Persistence;
-import com.haulmont.cuba.core.Query;
+import com.company.sample.core.repositories.config.CubaView;
+import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.FluentLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.projection.ProjectionFactory;
@@ -33,25 +35,46 @@ public class CubaJpqlQuery implements RepositoryQuery {
         this.method = method;
         this.metadata = metadata;
         this.factory = factory;
-        List<String> parameters = new ArrayList<>();
-        int position = 1;
-        Matcher m = Pattern.compile("(\\?[1-9]+[0-9]*)").matcher(query);
-        while (m.find()){
-            parameters.add(Integer.toString(position));
-            position++;
-        }
-        jpql = new JpqlMetadata(query, parameters, true);
+        jpql = generateQueryMetadata(method, query);
     }
+
+    public JpqlMetadata generateQueryMetadata(Method method, String query) {
+        List<String> parameters = new ArrayList<>();
+        Matcher m = Pattern.compile("(:[a-zA-Z]+)").matcher(query);
+        while (m.find()){
+            //extracting name from query removing colon
+            String name = query.substring(m.start(), m.end()).replaceAll(":", "");
+            parameters.add(name);
+        }
+        JpqlMetadata jpqlMetadata = new JpqlMetadata(query, parameters, true);
+        CubaView viewAnnotation = method.getDeclaredAnnotation(CubaView.class);
+        if (viewAnnotation != null){
+            jpqlMetadata.setView(viewAnnotation.value());
+        }
+        return jpqlMetadata;
+    }
+
 
     @Override
     public Object execute(Object[] parameters) {
-        Query query = getPersistence().getEntityManager().createQuery(jpql.getJpql());
         Assert.isTrue(parameters.length == jpql.getParameterNames().size(),
-                "Parameters list sizes in JPQL and in method are not equal: Method: "+Arrays.toString(parameters)+" JPQL: "+jpql.getParameterNames());
-        for (int i = 0; i < parameters.length; i++){
-            query.setParameter(Integer.parseInt(jpql.getParameterNames().get(i)), parameters[i], false);
+                String.format("Parameters list sizes in JPQL and in method are not equal: Method: %s JPQL: %s", Arrays.toString(parameters), jpql.getParameterNames()));
+
+        //Issues with generic types in DataManager, so need to cast it forcefully.
+        if (!Entity.class.isAssignableFrom(metadata.getDomainType())){
+            throw new IllegalStateException("CUBA can process only entities of class com.haulmont.cuba.core.entity.Entity");
         }
-        return query.getResultList();
+        FluentLoader.ByQuery query = getDataManager()
+                .load((Class<? extends Entity>) metadata.getDomainType())
+                .query(jpql.getJpql());
+        //Cannot set parameters in map because we need implicit conversion disabled.
+        for (int i = 0; i < parameters.length; i++){
+            query.parameter(jpql.getParameterNames().get(i), parameters[i], false);
+        }
+
+        return query
+                .view(jpql.getView())
+                .list();
     }
 
     @Override
@@ -60,8 +83,8 @@ public class CubaJpqlQuery implements RepositoryQuery {
     }
 
 
-    public Persistence getPersistence() {
-        return AppBeans.get(Persistence.class);
+    public DataManager getDataManager(){
+        return AppBeans.get(DataManager.class);
     }
 
 }

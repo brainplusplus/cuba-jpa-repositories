@@ -32,7 +32,7 @@ import java.util.List;
  */
 public final class JpqlQueryGenerator {
 
-    public static JpqlMetadata getSqlString(RepositoryMetadata metadata, PartTree parts) {
+    public static JpqlMetadata generateJpqlMetadata(RepositoryMetadata metadata, PartTree parts) {
         StringBuilder sql = new StringBuilder();
         List<String> parameters = new ArrayList<>();
         String alias = getEntityClassName(metadata);

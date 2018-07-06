@@ -15,6 +15,7 @@ public class CubaQueryLookupStrategy implements QueryLookupStrategy {
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
 
         JpqlQuery jpqlQuery = method.getDeclaredAnnotation(JpqlQuery.class);
+
         if (jpqlQuery != null){
             String qryString = jpqlQuery.value();
             return new CubaJpqlQuery(method, metadata, factory, qryString);

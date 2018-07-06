@@ -1,8 +1,10 @@
 package com.company.sample.core.repositories.query;
 
-import com.haulmont.cuba.core.Persistence;
-import com.haulmont.cuba.core.Query;
+import com.company.sample.core.repositories.config.CubaView;
+import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.FluentLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.projection.ProjectionFactory;
@@ -32,24 +34,40 @@ public class CubaListQuery implements RepositoryQuery {
         this.metadata = metadata;
         this.factory = factory;
         this.namedQueries = namedQueries;
-        jpql = generateQueryMetadata();
+        jpql = generateQueryMetadata(method, metadata);
     }
 
     @Override
     public Object execute(Object[] parameters) {
         log.info(String.format("Query: \"%s\" Parameters: \"%s\"", jpql, Arrays.toString(parameters)));
-        Query query = getPersistence().getEntityManager().createQuery(jpql.getJpql()); //TODO Cache this query
         Assert.isTrue(parameters.length == jpql.getParameterNames().size(),
-                "Parameters list sizes in JPQL and in method are not equal: Method: "+Arrays.toString(parameters)+" JPQL: "+jpql.getParameterNames());
-        for (int i = 0; i < parameters.length; i++){
-            query.setParameter(jpql.getParameterNames().get(i), parameters[i], false);
+                String.format("Parameters list sizes in JPQL and in method are not equal: Method: %s JPQL: %s", Arrays.toString(parameters), jpql.getParameterNames()));
+
+        //Issues with generic types in DataManager, so need to cast it forcefully.
+        if (!Entity.class.isAssignableFrom(metadata.getDomainType())){
+            throw new IllegalStateException("CUBA can process only entities of class com.haulmont.cuba.core.entity.Entity");
         }
-        return query.getResultList();
+        FluentLoader.ByQuery query = getDataManager()
+                .load((Class<? extends Entity>) metadata.getDomainType())
+                .query(jpql.getJpql());
+        //Cannot set parameters in map because we need implicit conversion disabled.
+        for (int i = 0; i < parameters.length; i++){
+            query.parameter(jpql.getParameterNames().get(i), parameters[i], false);
+        }
+
+        return query
+                .view(jpql.getView())
+                .list();
     }
 
-    public JpqlMetadata generateQueryMetadata() {
+    public JpqlMetadata generateQueryMetadata(Method method, RepositoryMetadata metadata) {
         PartTree qryTree = new PartTree(method.getName(), metadata.getDomainType());
-        return JpqlQueryGenerator.getSqlString(metadata, qryTree);
+        JpqlMetadata jpqlMetadata = JpqlQueryGenerator.generateJpqlMetadata(metadata, qryTree);
+        CubaView viewAnnotation = method.getDeclaredAnnotation(CubaView.class);
+        if (viewAnnotation != null){
+            jpqlMetadata.setView(viewAnnotation.value());
+        }
+        return jpqlMetadata;
     }
 
     @Override
@@ -57,7 +75,7 @@ public class CubaListQuery implements RepositoryQuery {
         return new QueryMethod(method, metadata, factory);
     }
 
-    public Persistence getPersistence() {
-        return AppBeans.get(Persistence.class);
+    public DataManager getDataManager(){
+        return AppBeans.get(DataManager.class);
     }
 }

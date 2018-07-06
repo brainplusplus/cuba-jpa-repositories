@@ -1,6 +1,7 @@
 package com.company.sample.core.repositories;
 
 import com.company.sample.core.repositories.config.CubaJpaRepository;
+import com.company.sample.core.repositories.config.CubaView;
 import com.company.sample.core.repositories.config.JpqlQuery;
 import com.company.sample.entity.Customer;
 
@@ -13,6 +14,7 @@ public interface CustomerRepository extends CubaJpaRepository<Customer, UUID> {
 
     List<Customer> findByAddressCity(String city);
 
-    @JpqlQuery("select c from sample$Customer c where c.name like concat(?1, '%')")
+    @CubaView("_minimal")
+    @JpqlQuery("select c from sample$Customer c where c.name like concat(:name, '%')")
     List<Customer> findByNameStartingWith(String name);
 }
