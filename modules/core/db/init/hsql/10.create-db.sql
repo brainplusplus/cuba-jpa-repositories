@@ -17,8 +17,9 @@ create table SAMPLE_CUSTOMER (
     primary key (ID)
 )^
 -- end SAMPLE_CUSTOMER
--- begin SAMPLE_ORDER
-create table SAMPLE_ORDER (
+
+-- begin SAMPLE_SALES_ORDER
+create table SAMPLE_SALES_ORDER (
     ID varchar(36) not null,
     VERSION integer not null,
     CREATE_TS timestamp,
@@ -34,4 +35,4 @@ create table SAMPLE_ORDER (
     --
     primary key (ID)
 )^
--- end SAMPLE_ORDER
+-- end SAMPLE_SALES_ORDER

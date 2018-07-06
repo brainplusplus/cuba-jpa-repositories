@@ -2,7 +2,7 @@ package com.company.sample.service;
 
 import com.company.sample.core.repositories.OrderRepository;
 import com.company.sample.entity.Customer;
-import com.company.sample.entity.Order;
+import com.company.sample.entity.SalesOrder;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -18,9 +18,9 @@ public class OrderServiceBean implements OrderService {
 
     @Override
     @Transactional
-    public List<Order> getOrdersForCustomer(Customer customer) {
-        Iterable<Order> orderIterable = orderRepository.findAll();
-        List<Order> orders = new ArrayList<>();
+    public List<SalesOrder> getSalesOrdersForCustomer(Customer customer) {
+        Iterable<SalesOrder> orderIterable = orderRepository.findAll();
+        List<SalesOrder> orders = new ArrayList<>();
         orderIterable.forEach(orders::add);
         return orders;
     }

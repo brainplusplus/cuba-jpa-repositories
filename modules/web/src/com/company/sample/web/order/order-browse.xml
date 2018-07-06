@@ -7,10 +7,10 @@
         messagesPack="com.company.sample.web.order">
     <dsContext>
         <groupDatasource id="ordersDs"
-                         class="com.company.sample.entity.Order"
+                         class="com.company.sample.entity.SalesOrder"
                          view="order-view">
             <query>
-                <![CDATA[select e from sample$Order e]]>
+                <![CDATA[select e from sample$SalesOrder e]]>
             </query>
         </groupDatasource>
     </dsContext>

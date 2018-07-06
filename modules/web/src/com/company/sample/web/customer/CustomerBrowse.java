@@ -1,7 +1,7 @@
 package com.company.sample.web.customer;
 
 import com.company.sample.entity.Customer;
-import com.company.sample.entity.Order;
+import com.company.sample.entity.SalesOrder;
 import com.company.sample.service.OrderService;
 import com.haulmont.cuba.gui.components.AbstractLookup;
 import com.haulmont.cuba.gui.components.GroupTable;
@@ -21,8 +21,8 @@ public class CustomerBrowse extends AbstractLookup {
     public void showOrders() {
         Customer customer = customersTable.getSingleSelected();
         if (customer != null) {
-            List<Order> orders = orderService.getOrdersForCustomer(customer);
-            showNotification(orders.stream().map(Order::getNumber).collect(Collectors.joining(",")));
+            List<SalesOrder> orders = orderService.getSalesOrdersForCustomer(customer);
+            showNotification(orders.stream().map(SalesOrder::getNumber).collect(Collectors.joining(",")));
         }
     }
 }

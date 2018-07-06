@@ -1,6 +1,7 @@
 package com.company.sample.core.repositories;
 
 import com.company.sample.core.repositories.config.CubaJpaRepository;
+import com.company.sample.core.repositories.config.JpaQuery;
 import com.company.sample.entity.Customer;
 
 import java.util.List;
@@ -12,6 +13,6 @@ public interface CustomerRepository extends CubaJpaRepository<Customer, UUID> {
 
     List<Customer> findByAddressCity(String city);
 
-    //@Query("select c from #{#entityName} c where c.name like ?1%")
+    @JpaQuery("select c from sample$Customer c where c.name like :name%")
     List<Customer> findByNameStartingWith(String name);
 }

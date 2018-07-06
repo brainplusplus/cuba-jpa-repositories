@@ -13,9 +13,9 @@ import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
 
 @NamePattern("%s|number")
-@Table(name = "SAMPLE_ORDER")
-@Entity(name = "sample$Order")
-public class Order extends StandardEntity {
+@Table(name = "SAMPLE_SALES_ORDER")
+@Entity(name = "sample$SalesOrder")
+public class SalesOrder extends StandardEntity {
     private static final long serialVersionUID = -2862329198474356617L;
 
     @Column(name = "NUMBER_")

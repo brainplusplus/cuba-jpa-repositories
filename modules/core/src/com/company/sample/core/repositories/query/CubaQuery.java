@@ -43,7 +43,7 @@ public class CubaQuery implements RepositoryQuery {
         Assert.isTrue(parameters.length == jpql.getParameterNames().size(),
                 "Parameters list sizes in JPQL and in method are not equal: Method: "+Arrays.toString(parameters)+" JPQL: "+jpql.getParameterNames());
         for (int i = 0; i < parameters.length; i++){
-            query.setParameter(jpql.getParameterNames().get(i), parameters[i]);
+            query.setParameter(jpql.getParameterNames().get(i), parameters[i], false);
         }
         return query.getResultList();
     }

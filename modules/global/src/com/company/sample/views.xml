@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
-    <view class="com.company.sample.entity.Order"
+    <view class="com.company.sample.entity.SalesOrder"
           extends="_local"
           name="order-view">
         <property name="customer"

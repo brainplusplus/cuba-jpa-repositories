@@ -1,6 +1,11 @@
 package com.company.sample.core;
 
 import com.company.sample.SampleTestContainer;
+import com.company.sample.core.repositories.CustomerRepository;
+import com.company.sample.core.repositories.OrderRepository;
+import com.company.sample.entity.Address;
+import com.company.sample.entity.Customer;
+import com.company.sample.entity.SalesOrder;
 import com.haulmont.bali.db.MapHandler;
 import com.haulmont.bali.db.QueryRunner;
 import com.haulmont.cuba.core.Persistence;
@@ -8,11 +13,6 @@ import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EntityStates;
 import com.haulmont.cuba.core.global.Metadata;
-import com.company.sample.core.repositories.CustomerRepository;
-import com.company.sample.core.repositories.OrderRepository;
-import com.company.sample.entity.Address;
-import com.company.sample.entity.Customer;
-import com.company.sample.entity.Order;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -23,7 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class SpringDataRepositoryTest {
 
@@ -37,7 +39,7 @@ public class SpringDataRepositoryTest {
     private EntityStates entityStates;
 
     private Customer customer1, customer2;
-    private Order order1;
+    private SalesOrder order1;
 
     @Before
     public void setUp() throws Exception {
@@ -57,7 +59,7 @@ public class SpringDataRepositoryTest {
         customer2.setAddress(new Address());
         customer2.getAddress().setCity("Springfield");
 
-        order1 = metadata.create(Order.class);
+        order1 = metadata.create(SalesOrder.class);
         order1.setCustomer(customer1);
         order1.setNumber("111");
         order1.setDate(new Date());
@@ -72,7 +74,7 @@ public class SpringDataRepositoryTest {
     @After
     public void tearDown() throws Exception {
         QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        runner.update("delete from SAMPLE_ORDER");
+        runner.update("delete from SAMPLE_SALES_ORDER");
         runner.update("delete from SAMPLE_CUSTOMER");
     }
 
@@ -135,7 +137,7 @@ public class SpringDataRepositoryTest {
     @Test
     public void testFindByAssociationProperty() {
         try (Transaction tx = persistence.getTransaction()) {
-            List<Order> orders = orderRepository.findByCustomer(customer1);
+            List<SalesOrder> orders = orderRepository.findByCustomer(customer1);
             assertEquals(1, orders.size());
             assertEquals(order1, orders.get(0));
         }
