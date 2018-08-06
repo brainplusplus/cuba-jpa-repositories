@@ -2,15 +2,11 @@ package com.company.sample.core.repositories.query;
 
 import com.company.sample.core.repositories.config.CubaView;
 import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.FluentLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
-import org.springframework.data.repository.query.QueryMethod;
-import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
@@ -20,21 +16,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CubaJpqlQuery implements RepositoryQuery {
+public class CubaJpqlQuery extends CubaAbstractQuery {
 
 
     private static final Log log = LogFactory.getLog(CubaJpqlQuery.class.getName());
 
-    private final Method method;
-    private final RepositoryMetadata metadata;
-    private final ProjectionFactory factory;
-
     private JpqlMetadata jpql;
 
     public CubaJpqlQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, String query) {
-        this.method = method;
-        this.metadata = metadata;
-        this.factory = factory;
+        super(method, metadata, factory);
         jpql = generateQueryMetadata(method, query);
     }
 
@@ -77,14 +67,5 @@ public class CubaJpqlQuery implements RepositoryQuery {
                 .list();
     }
 
-    @Override
-    public QueryMethod getQueryMethod() {
-        return new QueryMethod(method, metadata, factory);
-    }
-
-
-    public DataManager getDataManager(){
-        return AppBeans.get(DataManager.class);
-    }
 
 }

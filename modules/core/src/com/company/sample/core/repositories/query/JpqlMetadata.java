@@ -46,6 +46,8 @@ public class JpqlMetadata {
         return "JpqlMetadata{" +
                 "jpql='" + jpql + '\'' +
                 ", parameterNames=" + parameterNames +
+                ", ordinal=" + ordinal +
+                ", view='" + view + '\'' +
                 '}';
     }
 }

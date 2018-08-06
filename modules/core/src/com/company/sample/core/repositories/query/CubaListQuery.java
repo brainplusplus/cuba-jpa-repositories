@@ -2,39 +2,40 @@ package com.company.sample.core.repositories.query;
 
 import com.company.sample.core.repositories.config.CubaView;
 import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.FluentLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
-import org.springframework.data.repository.query.QueryMethod;
-import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class CubaListQuery implements RepositoryQuery {
+public class CubaListQuery extends CubaAbstractQuery {
 
     private static final Log log = LogFactory.getLog(CubaListQuery.class.getName());
 
-    private final Method method;
-    private final RepositoryMetadata metadata;
-    private final ProjectionFactory factory;
     private final NamedQueries namedQueries;
 
     private JpqlMetadata jpql;
 
     public CubaListQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
-        this.method = method;
-        this.metadata = metadata;
-        this.factory = factory;
+        super(method, metadata, factory);
         this.namedQueries = namedQueries;
         jpql = generateQueryMetadata(method, metadata);
+    }
+
+    public JpqlMetadata generateQueryMetadata(Method method, RepositoryMetadata metadata) {
+        PartTree qryTree = new PartTree(method.getName(), metadata.getDomainType());
+        JpqlMetadata jpqlMetadata = JpqlQueryGenerator.generateJpqlMetadata(metadata, qryTree);
+        CubaView viewAnnotation = method.getDeclaredAnnotation(CubaView.class);
+        if (viewAnnotation != null){
+            jpqlMetadata.setView(viewAnnotation.value());
+        }
+        return jpqlMetadata;
     }
 
     @Override
@@ -58,24 +59,5 @@ public class CubaListQuery implements RepositoryQuery {
         return query
                 .view(jpql.getView())
                 .list();
-    }
-
-    public JpqlMetadata generateQueryMetadata(Method method, RepositoryMetadata metadata) {
-        PartTree qryTree = new PartTree(method.getName(), metadata.getDomainType());
-        JpqlMetadata jpqlMetadata = JpqlQueryGenerator.generateJpqlMetadata(metadata, qryTree);
-        CubaView viewAnnotation = method.getDeclaredAnnotation(CubaView.class);
-        if (viewAnnotation != null){
-            jpqlMetadata.setView(viewAnnotation.value());
-        }
-        return jpqlMetadata;
-    }
-
-    @Override
-    public QueryMethod getQueryMethod() {
-        return new QueryMethod(method, metadata, factory);
-    }
-
-    public DataManager getDataManager(){
-        return AppBeans.get(DataManager.class);
     }
 }
