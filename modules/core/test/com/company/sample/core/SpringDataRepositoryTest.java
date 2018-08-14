@@ -27,6 +27,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class SpringDataRepositoryTest {
@@ -66,11 +67,12 @@ public class SpringDataRepositoryTest {
         order1.setNumber("111");
         order1.setDate(new Date());
 
-        persistence.runInTransaction(em -> {
-            em.persist(customer1);
-            em.persist(customer2);
-            em.persist(order1);
-        });
+        try (Transaction tx = persistence.getTransaction()) {
+            customerRepository.save(customer1);
+            customerRepository.save(customer2);
+            orderRepository.save(order1);
+            tx.commit();
+        };
     }
 
     @After
@@ -82,21 +84,59 @@ public class SpringDataRepositoryTest {
 
     @Test
     public void testSave() throws SQLException {
+        Customer customer = metadata.create(Customer.class);
+        customer.setName("customer");
         try (Transaction tx = persistence.getTransaction()) {
-
-            assertNotNull(customerRepository);
-
-            Customer customer = metadata.create(Customer.class);
-            customer.setName("customer");
             customerRepository.save(customer);
+            tx.commit();
         }
 
         QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer1.getId() + "'",
+        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer.getId() + "'",
                 new MapHandler());
+        assertNotNull(row);
         assertNotNull(row.get("CREATE_TS"));
         assertNotNull(row.get("CREATED_BY"));
     }
+
+
+    @Test
+    public void testCount() throws SQLException {
+        long cnt = customerRepository.count();
+        assertEquals(2, cnt);
+    }
+
+
+    @Test
+    public void testDeleteEntity() throws SQLException {
+        try (Transaction tx = persistence.getTransaction()) {
+            persistence.setSoftDeletion(false);
+            Customer customer = customerRepository.findOne(customer2.getId());
+            customerRepository.delete(customer);
+            tx.commit();
+        }
+
+        QueryRunner runner = new QueryRunner(persistence.getDataSource());
+        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer2.getId() + "'",
+                new MapHandler());
+        assertNull(row);
+    }
+
+
+    @Test
+    public void testDeleteById() throws SQLException {
+        try (Transaction tx = persistence.getTransaction()) {
+            persistence.setSoftDeletion(false);
+            customerRepository.delete(customer2.getId());
+            tx.commit();
+        }
+
+        QueryRunner runner = new QueryRunner(persistence.getDataSource());
+        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer2.getId() + "'",
+                new MapHandler());
+        assertNull(row);
+    }
+
 
     @Test
     public void testFindById() {

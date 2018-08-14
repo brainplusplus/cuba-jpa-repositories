@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.9.3'
+    ext.cubaVersion = '6.9.4'
     repositories {
         
         mavenLocal()
@@ -115,6 +115,10 @@ configure(coreModule) {
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
         appName = "${modulePrefix}-core"
         appJars(modulePrefix + '-global', modulePrefix + '-core')
+    }
+
+    task startDb(type: CubaHsqlStart) {
+        dbName = 'sample'
     }
 
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {

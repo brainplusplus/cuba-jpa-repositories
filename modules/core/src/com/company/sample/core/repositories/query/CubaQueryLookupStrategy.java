@@ -23,6 +23,5 @@ public class CubaQueryLookupStrategy implements QueryLookupStrategy {
             return new CubaListQuery(method, metadata, factory, namedQueries);
         }
 
-
     }
 }

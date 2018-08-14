@@ -37,10 +37,15 @@ public final class JpqlQueryGenerator {
         List<String> parameters = new ArrayList<>();
         String alias = getEntityClassName(metadata);
 
-        sql.append("SELECT ");
+        if (parts.isDelete()) {
+            sql.append("DELETE");
+        } else {
+            sql.append("SELECT ");
+        }
 
-        if (parts.isDistinct())
-            throw new UnsupportedOperationException("DISTINCT clause in not supported.");
+        if (parts.isDistinct()) {
+            sql.append("DISTINCT");
+        }
 
         if (parts.isCountProjection())
             sql.append("COUNT(1) ");
@@ -51,6 +56,18 @@ public final class JpqlQueryGenerator {
         Entity annotation = metadata.getDomainType().getAnnotation(Entity.class);
         sql.append("FROM ").append(annotation.name()).append(" ").append(alias);
 
+        addWhereClause(parts, sql, parameters);
+
+        addSorting(sql, parts.getSort());
+
+        if (parts.isLimiting()) {
+            sql.append(" LIMIT ");
+            sql.append(parts.getMaxResults().intValue());
+        }
+        return new JpqlMetadata(sql.toString(), parameters, false);
+    }
+
+    private static void addWhereClause(PartTree parts, StringBuilder sql, List<String> parameters) {
         if (parts.iterator().hasNext()) {
             sql.append(" WHERE ");
 
@@ -68,14 +85,6 @@ public final class JpqlQueryGenerator {
 
             sql.delete(sql.length() - 4, sql.length());
         }
-
-        addSorting(sql, parts.getSort());
-
-        if (parts.isLimiting()) {
-            sql.append(" LIMIT ");
-            sql.append(parts.getMaxResults().intValue());
-        }
-        return new JpqlMetadata(sql.toString(), parameters, false);
     }
 
     public static String getEntityClassName(RepositoryMetadata metadata) {
@@ -88,7 +97,7 @@ public final class JpqlQueryGenerator {
      * @param sql  SQL text string.
      * @param sort Sort method.
      */
-    public static StringBuilder addSorting(StringBuilder sql, Sort sort) {
+    private static StringBuilder addSorting(StringBuilder sql, Sort sort) {
         if (sort != null) {
             sql.append(" ORDER BY ");
 

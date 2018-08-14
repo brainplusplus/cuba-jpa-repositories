@@ -36,6 +36,6 @@ public class CubaRepositoryConfigurationExtension extends RepositoryConfiguratio
      */
     @Override
     protected Collection<Class<?>> getIdentifyingTypes() {
-        return Collections.<Class<?>>singleton(CubaJpaRepository.class);
+        return Collections.singleton(CubaJpaRepository.class);
     }
 }

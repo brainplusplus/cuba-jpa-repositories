@@ -1,10 +1,12 @@
 package com.company.sample.core.repositories.support;
 
 import com.company.sample.core.repositories.config.CubaJpaRepository;
+import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.FluentLoader;
 import org.apache.commons.lang.NotImplementedException;
 import org.springframework.context.annotation.Conditional;
 
@@ -68,18 +70,22 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public Iterable<T> findAll(Iterable<ID> ids) {
+    public Iterable<T> findAll(Iterable<ID> ids) {//TODO implement find by ID list
         throw new NotImplementedException();
     }
 
     @Override
     public long count() {
-        return getDataManager().load(domainClass).view("_local").list().size();
+        //return getDataManager().getCount(LoadContext.create(domainClass)); //TODO Effective since 6.10
+        FluentLoader<T, ID> fluentLoader = getDataManager().load(domainClass).view("_local");
+        return fluentLoader.list().size();
     }
 
     @Override
-    public void delete(ID id) {
-        throw new NotImplementedException();
+    public void delete(ID id) { //TODO Need to add removal by entity ID to entityManager
+        EntityManager entityManager = getPersistence().getEntityManager();
+        T entity = entityManager.find(domainClass, id, "_local");
+        entityManager.remove(entity);
     }
 
     @Override
@@ -93,7 +99,8 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public void deleteAll() {
-        throw new NotImplementedException();
+    public void deleteAll() {//TODO implement total delete by entity class
+        Iterable<T> entities = getDataManager().load(domainClass).list();
+        entities.forEach(getPersistence().getEntityManager()::remove);
     }
 }
