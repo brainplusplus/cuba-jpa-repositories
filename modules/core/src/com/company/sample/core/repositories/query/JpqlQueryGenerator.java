@@ -38,19 +38,19 @@ public final class JpqlQueryGenerator {
         String alias = getEntityClassName(metadata);
 
         if (parts.isDelete()) {
-            sql.append("DELETE");
+            sql.append("DELETE ");
         } else {
             sql.append("SELECT ");
-        }
 
-        if (parts.isDistinct()) {
-            sql.append("DISTINCT");
-        }
+            if (parts.isDistinct()) {
+                sql.append("DISTINCT");
+            }
 
-        if (parts.isCountProjection())
-            sql.append("COUNT(1) ");
-        else {
-            sql.append(" ").append(alias).append(" ");
+            if (parts.isCountProjection())
+                sql.append("COUNT(1) ");
+            else {
+                sql.append(" ").append(alias).append(" ");
+            }
         }
 
         Entity annotation = metadata.getDomainType().getAnnotation(Entity.class);

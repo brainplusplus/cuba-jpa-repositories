@@ -5,7 +5,7 @@ import org.springframework.data.repository.core.support.AbstractEntityInformatio
 
 import java.io.Serializable;
 
-public class CubaEntityInformation<T , ID extends Serializable> extends AbstractEntityInformation<T, ID> {
+public class CubaEntityInformation<T, ID extends Serializable> extends AbstractEntityInformation<T, ID> {
 
     public CubaEntityInformation(Class<T> domainClass) {
         super(domainClass);
@@ -13,11 +13,14 @@ public class CubaEntityInformation<T , ID extends Serializable> extends Abstract
 
     @Override
     public ID getId(T object) {
-        if (Entity.class.isAssignableFrom(getJavaType())){
-             Entity entity =  (Entity)object;
-             return (ID)entity.getId();
-        } else {
+        if (object == null) {
             return null;
+        }
+        if (Entity.class.isAssignableFrom(getJavaType())) {
+            Entity entity = (Entity) object;
+            return (ID) entity.getId();
+        } else {
+            throw new IllegalStateException("Wrong entity type");
         }
     }
 

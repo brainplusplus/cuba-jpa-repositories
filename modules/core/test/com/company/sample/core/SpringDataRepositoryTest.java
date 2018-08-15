@@ -108,7 +108,7 @@ public class SpringDataRepositoryTest {
 
 
     @Test
-    public void testDeleteEntity() throws SQLException {
+    public void testDeleteCustomer() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);
             Customer customer = customerRepository.findOne(customer2.getId());
@@ -124,10 +124,25 @@ public class SpringDataRepositoryTest {
 
 
     @Test
-    public void testDeleteById() throws SQLException {
+    public void testDeleteCustomerById() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);
             customerRepository.delete(customer2.getId());
+            tx.commit();
+        }
+
+        QueryRunner runner = new QueryRunner(persistence.getDataSource());
+        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer2.getId() + "'",
+                new MapHandler());
+        assertNull(row);
+    }
+
+
+    @Test
+    public void testDeleteCustomerByName() throws SQLException {
+        try (Transaction tx = persistence.getTransaction()) {
+            persistence.setSoftDeletion(false);
+            customerRepository.removeByName(customer2.getName());
             tx.commit();
         }
 

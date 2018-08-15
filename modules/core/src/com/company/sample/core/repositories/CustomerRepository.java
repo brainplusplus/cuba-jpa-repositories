@@ -14,6 +14,8 @@ public interface CustomerRepository extends CubaJpaRepository<Customer, UUID> {
 
     List<Customer> findByAddressCity(String city);
 
+    void removeByName(String name);
+
     @CubaView("_minimal")
     @JpqlQuery("select c from sample$Customer c where c.name like concat(:name, '%')")
     List<Customer> findByNameStartingWith(String name);
