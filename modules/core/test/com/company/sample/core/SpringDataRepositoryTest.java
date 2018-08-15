@@ -141,48 +141,37 @@ public class SpringDataRepositoryTest {
     @Test
     public void testFindById() {
         Customer customer;
-        try (Transaction tx = persistence.getTransaction()) {
-            customer = customerRepository.findOne(customer1.getId());
-            assertEquals(customer1, customer);
-            assertTrue(entityStates.isManaged(customer));
-        }
+        customer = customerRepository.findOne(customer1.getId());
+        assertEquals(customer1, customer);
         assertTrue(entityStates.isDetached(customer));
     }
 
     @Test
     public void testFindByProperty() {
-        try (Transaction tx = persistence.getTransaction()) {
-            List<Customer> customers = customerRepository.findByName(customer1.getName());
-            assertEquals(1, customers.size());
-            assertEquals(customer1, customers.get(0));
-        }
+        List<Customer> customers = customerRepository.findByName(customer1.getName());
+        assertEquals(1, customers.size());
+        assertEquals(customer1, customers.get(0));
     }
 
     @Test
     public void testFindByPropertyOfEmbedded() {
-        try (Transaction tx = persistence.getTransaction()) {
-            List<Customer> customers = customerRepository.findByAddressCity(customer1.getAddress().getCity());
-            assertEquals(1, customers.size());
-            assertEquals(customer1, customers.get(0));
-        }
+        List<Customer> customers = customerRepository.findByAddressCity(customer1.getAddress().getCity());
+        assertEquals(1, customers.size());
+        assertEquals(customer1, customers.get(0));
     }
 
     @Test
     public void testQueryWithAdvancedLike() {
-        try (Transaction tx = persistence.getTransaction()) {
-            List<Customer> customers = customerRepository.findByNameStartingWith("cust");
-            assertFalse(CollectionUtils.isEmpty(customers));
-            assertEquals(1, customers.size());
-            assertEquals(customer1, customers.get(0));
-        }
+        List<Customer> customers = customerRepository.findByNameStartingWith("cust");
+        assertFalse(CollectionUtils.isEmpty(customers));
+        assertEquals(1, customers.size());
+        assertEquals(customer1, customers.get(0));
     }
 
     @Test
     public void testFindByAssociationProperty() {
-        try (Transaction tx = persistence.getTransaction()) {
-            List<SalesOrder> orders = orderRepository.findByCustomer(customer1);
-            assertEquals(1, orders.size());
-            assertEquals(order1, orders.get(0));
-        }
+        List<SalesOrder> orders = orderRepository.findByCustomer(customer1);
+        assertEquals(1, orders.size());
+        assertEquals(order1, orders.get(0));
     }
 }
