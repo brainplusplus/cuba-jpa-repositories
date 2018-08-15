@@ -8,11 +8,9 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.FluentLoader;
 import org.apache.commons.lang.NotImplementedException;
-import org.springframework.context.annotation.Conditional;
 
 import java.io.Serializable;
 
-@Conditional(ConditionFalse.class) //@NoRepositoryBean doesn't work
 public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> implements CubaJpaRepository<T, ID> {
 
     private Class<T> domainClass;
