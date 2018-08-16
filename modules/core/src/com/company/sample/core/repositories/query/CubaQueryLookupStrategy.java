@@ -6,6 +6,7 @@ import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.data.repository.query.parser.PartTree;
 
 import java.lang.reflect.Method;
 
@@ -14,15 +15,17 @@ public class CubaQueryLookupStrategy implements QueryLookupStrategy {
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
 
-        //TODO Need to handle DELETE separately
-
         JpqlQuery jpqlQuery = method.getDeclaredAnnotation(JpqlQuery.class);
-        if (jpqlQuery != null){
+        if (jpqlQuery != null) {
             String qryString = jpqlQuery.value();
             return new CubaJpqlQuery(method, metadata, factory, qryString);
         } else {
-            return new CubaListQuery(method, metadata, factory, namedQueries);
+            PartTree qryTree = new PartTree(method.getName(), metadata.getDomainType());
+            if (qryTree.isDelete()) {
+                return new CubaDeleteQuery(method, metadata, factory, qryTree);
+            } else {
+                return new CubaListQuery(method, metadata, factory, namedQueries, qryTree);
+            }
         }
-
     }
 }

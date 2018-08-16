@@ -13,6 +13,7 @@ import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EntityStates;
 import com.haulmont.cuba.core.global.Metadata;
+import org.apache.commons.lang.NotImplementedException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -138,18 +139,13 @@ public class SpringDataRepositoryTest {
     }
 
 
-    @Test
+    @Test (expected = NotImplementedException.class) //Unless we implement batch delete in data manager
     public void testDeleteCustomerByName() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);
             customerRepository.removeByName(customer2.getName());
             tx.commit();
         }
-
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer2.getId() + "'",
-                new MapHandler());
-        assertNull(row);
     }
 
 
