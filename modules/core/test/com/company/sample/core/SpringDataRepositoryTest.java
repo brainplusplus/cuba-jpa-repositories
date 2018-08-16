@@ -43,7 +43,7 @@ public class SpringDataRepositoryTest {
     private EntityStates entityStates;
 
     private Customer customer1, customer2, customer3;
-    private SalesOrder order1;
+    private SalesOrder order1, order2, order3;
 
     @Before
     public void setUp() throws Exception {
@@ -74,13 +74,25 @@ public class SpringDataRepositoryTest {
         order1.setNumber("111");
         order1.setDate(new Date());
 
-        try (Transaction tx = persistence.getTransaction()) {
-            customerRepository.save(customer1);
-            customerRepository.save(customer2);
-            customerRepository.save(customer3);
-            orderRepository.save(order1);
-            tx.commit();
-        };
+
+        order2 = metadata.create(SalesOrder.class);
+        order2.setCustomer(customer1);
+        order2.setNumber("112");
+        order2.setDate(new Date());
+
+        order3 = metadata.create(SalesOrder.class);
+        order3.setCustomer(customer2);
+        order3.setNumber("113");
+        order3.setDate(new Date());
+
+        persistence.runInTransaction(em -> {
+            em.persist(customer1);
+            em.persist(customer2);
+            em.persist(customer3);
+            em.persist(order1);
+            em.persist(order2);
+            em.persist(order3);
+        });
     }
 
     @After
@@ -126,16 +138,37 @@ public class SpringDataRepositoryTest {
     }
 
     @Test
+    public void testCountOrdersByCustomer(){
+        long first = orderRepository.countSalesOrdersByCustomer(customer1);
+        assertEquals(2, first);
+        long second = orderRepository.countSalesOrdersByCustomer(customer2);
+        assertEquals(1, second);
+        long third = orderRepository.countSalesOrdersByCustomer(customer3);
+        assertEquals(0, third);
+    }
+
+    @Test
+    public void testCountOrdersByCustomerCity(){
+        long first = orderRepository.countSalesOrdersByCustomerAddressCity("Samara");
+        assertEquals(2, first);
+        long second = orderRepository.countSalesOrdersByCustomerAddressCity("Springfield");
+        assertEquals(1, second);
+        long third = orderRepository.countSalesOrdersByCustomerAddressCity("London");
+        assertEquals(0, third);
+    }
+
+
+    @Test
     public void testDeleteCustomer() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);
-            Customer customer = customerRepository.findOne(customer2.getId());
+            Customer customer = customerRepository.findOne(customer3.getId());
             customerRepository.delete(customer);
             tx.commit();
         }
 
         QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer2.getId() + "'",
+        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer3.getId() + "'",
                 new MapHandler());
         assertNull(row);
     }
@@ -145,12 +178,12 @@ public class SpringDataRepositoryTest {
     public void testDeleteCustomerById() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);
-            customerRepository.delete(customer2.getId());
+            customerRepository.delete(customer3.getId());
             tx.commit();
         }
 
         QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer2.getId() + "'",
+        Map<String, Object> row = runner.query("select * from SAMPLE_CUSTOMER where ID = '" + customer3.getId() + "'",
                 new MapHandler());
         assertNull(row);
     }
@@ -199,7 +232,7 @@ public class SpringDataRepositoryTest {
     @Test
     public void testFindByAssociationProperty() {
         List<SalesOrder> orders = orderRepository.findByCustomer(customer1);
-        assertEquals(1, orders.size());
-        assertEquals(order1, orders.get(0));
+        assertEquals(2, orders.size());
+        assertTrue(orders.contains(order1) && orders.contains(order2));
     }
 }

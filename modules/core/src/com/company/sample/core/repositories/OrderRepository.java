@@ -12,4 +12,9 @@ public interface OrderRepository extends CubaJpaRepository<SalesOrder, UUID> {
 
     @CubaView("_minimal")
     List<SalesOrder> findByCustomer(Customer customer);
+
+    long countSalesOrdersByCustomer(Customer customer);
+
+    long countSalesOrdersByCustomerAddressCity (String city);
+
 }
