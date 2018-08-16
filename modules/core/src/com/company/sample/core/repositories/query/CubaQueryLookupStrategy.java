@@ -24,7 +24,7 @@ public class CubaQueryLookupStrategy implements QueryLookupStrategy {
             if (qryTree.isDelete()) {
                 return new CubaDeleteQuery(method, metadata, factory, qryTree);
             } else {
-                return new CubaListQuery(method, metadata, factory, namedQueries, qryTree);
+                return new CubaListQuery(method, metadata, factory,  qryTree);
             }
         }
     }

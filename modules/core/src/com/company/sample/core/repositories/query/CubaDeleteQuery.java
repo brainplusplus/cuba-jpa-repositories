@@ -14,13 +14,19 @@ public class CubaDeleteQuery extends CubaAbstractQuery {
 
     private static final Log log = LogFactory.getLog(CubaDeleteQuery.class.getName());
 
+    //TODO need to implement batch delete in dataManager
     public CubaDeleteQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
         super(method, metadata, factory);
         jpql = generateQueryMetadata(method, metadata, qryTree);
     }
 
     @Override
-    protected Object doExecute(FluentLoader.ByQuery query, Object[] parameters) { //TODO need to implement batch delete in dataManager
+    public Object execute(Object[] parameters) {
+        throw new NotImplementedException("Batch delete is not supported yet");
+    }
+
+    @Override
+    protected Object doExecute(FluentLoader.ByQuery query, Object[] parameters) {
         throw new NotImplementedException("Batch delete is not supported yet");
     }
 }

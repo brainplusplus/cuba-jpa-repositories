@@ -4,7 +4,6 @@ import com.haulmont.cuba.core.global.FluentLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.projection.ProjectionFactory;
-import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
@@ -14,11 +13,8 @@ public class CubaListQuery extends CubaAbstractQuery {
 
     private static final Log log = LogFactory.getLog(CubaListQuery.class.getName());
 
-    private final NamedQueries namedQueries;
-
-    public CubaListQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries, PartTree qryTree) {
+    public CubaListQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
         super(method, metadata, factory);
-        this.namedQueries = namedQueries;
         jpql = generateQueryMetadata(method, metadata, qryTree);
     }
 

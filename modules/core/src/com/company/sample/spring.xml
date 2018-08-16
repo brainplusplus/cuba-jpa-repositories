@@ -7,7 +7,6 @@
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
-    <context:component-scan base-package="com.company.sample"/>
     <!-- Annotation-based beans -->
-    <beans:bean id="cuba_DataManager" class="com.company.sample.core.repositories.support.RepositoriesDataManager"/>
+    <context:component-scan base-package="com.company.sample"/>
 </beans:beans>
