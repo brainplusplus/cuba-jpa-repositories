@@ -9,6 +9,7 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class CubaDeleteQuery extends CubaAbstractQuery {
 
@@ -22,6 +23,7 @@ public class CubaDeleteQuery extends CubaAbstractQuery {
 
     @Override
     public Object execute(Object[] parameters) {
+        log.debug(String.format("Query: \"%s\" Parameters: \"%s\"", jpql, Arrays.toString(parameters)));
         throw new NotImplementedException("Batch delete is not supported yet");
     }
 

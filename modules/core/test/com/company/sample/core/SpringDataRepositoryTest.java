@@ -42,7 +42,7 @@ public class SpringDataRepositoryTest {
     private OrderRepository orderRepository;
     private EntityStates entityStates;
 
-    private Customer customer1, customer2;
+    private Customer customer1, customer2, customer3;
     private SalesOrder order1;
 
     @Before
@@ -63,6 +63,12 @@ public class SpringDataRepositoryTest {
         customer2.setAddress(new Address());
         customer2.getAddress().setCity("Springfield");
 
+        customer3 = metadata.create(Customer.class);
+        customer3.setName("some cust 3");
+        customer3.setAddress(new Address());
+        customer3.getAddress().setCity("Springfield");
+
+
         order1 = metadata.create(SalesOrder.class);
         order1.setCustomer(customer1);
         order1.setNumber("111");
@@ -71,6 +77,7 @@ public class SpringDataRepositoryTest {
         try (Transaction tx = persistence.getTransaction()) {
             customerRepository.save(customer1);
             customerRepository.save(customer2);
+            customerRepository.save(customer3);
             orderRepository.save(order1);
             tx.commit();
         };
@@ -102,11 +109,21 @@ public class SpringDataRepositoryTest {
 
 
     @Test
-    public void testCount() throws SQLException {
+    public void testBasicCount() throws SQLException {
         long cnt = customerRepository.count();
-        assertEquals(2, cnt);
+        assertEquals(3, cnt);
     }
 
+
+    @Test
+    public void testCountCustomersByCity(){
+        long first = customerRepository.countCustomersByAddressCity("Samara");
+        assertEquals(1, first);
+        long second = customerRepository.countCustomersByAddressCity("Springfield");
+        assertEquals(2, second);
+        long third = customerRepository.countCustomersByAddressCity("London");
+        assertEquals(0, third);
+    }
 
     @Test
     public void testDeleteCustomer() throws SQLException {
@@ -139,7 +156,7 @@ public class SpringDataRepositoryTest {
     }
 
 
-    @Test (expected = NotImplementedException.class) //Unless we implement batch delete in data manager
+    @Test (expected = NotImplementedException.class) //TODO Unless we implement batch delete in DataManager
     public void testDeleteCustomerByName() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);

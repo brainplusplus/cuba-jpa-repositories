@@ -47,7 +47,7 @@ public final class JpqlQueryGenerator {
             }
 
             if (parts.isCountProjection())
-                sql.append("COUNT(1) ");
+                sql.append("COUNT(").append(alias).append(") ");
             else {
                 sql.append(" ").append(alias).append(" ");
             }

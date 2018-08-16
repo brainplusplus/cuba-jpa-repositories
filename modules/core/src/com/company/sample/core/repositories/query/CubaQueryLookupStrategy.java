@@ -23,6 +23,8 @@ public class CubaQueryLookupStrategy implements QueryLookupStrategy {
             PartTree qryTree = new PartTree(method.getName(), metadata.getDomainType());
             if (qryTree.isDelete()) {
                 return new CubaDeleteQuery(method, metadata, factory, qryTree);
+            } else if (qryTree.isCountProjection()){
+                return new CubaScalarQuery(method, metadata, factory,  qryTree);
             } else {
                 return new CubaListQuery(method, metadata, factory,  qryTree);
             }

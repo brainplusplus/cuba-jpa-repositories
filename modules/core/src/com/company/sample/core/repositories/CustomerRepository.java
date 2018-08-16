@@ -14,7 +14,9 @@ public interface CustomerRepository extends CubaJpaRepository<Customer, UUID> {
 
     List<Customer> findByAddressCity(String city);
 
-    void removeByName(String name);
+    long countCustomersByAddressCity(String city); //TODO doesn't work due to DataManager limitations
+
+    void removeByName(String name); //TODO doesn't work due to DataManager limitations
 
     @CubaView("_minimal")
     @JpqlQuery("select c from sample$Customer c where c.name like concat(:name, '%')")

@@ -31,7 +31,7 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public Iterable<T> findAll(Iterable<ID> ids, String view) { //TODO implemen search by IDs
+    public Iterable<T> findAll(Iterable<ID> ids, String view) { //TODO implement search by IDs
         return getDataManager().load(domainClass).view(view).list();
     }
 
@@ -72,7 +72,7 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public void delete(ID id) { //TODO Need to add removal by entity ID to entityManager
+    public void delete(ID id) { //TODO Need to add removal by entity ID to DataManager
         DataManager dataManager = getDataManager();
         T entity = dataManager.load(domainClass).id(id).view("_local").one();
         dataManager.remove(entity);
@@ -89,7 +89,7 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public void deleteAll() {//TODO implement total delete by entity class
+    public void deleteAll() {//TODO implement total delete by entity class in DataManager
         Iterable<T> entities = getDataManager().load(domainClass).list();
         entities.forEach(getDataManager()::remove);
     }
