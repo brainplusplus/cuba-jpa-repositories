@@ -32,7 +32,7 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
 
     @Override
     public Iterable<T> findAll(Iterable<ID> ids, String view) { //TODO implement search by IDs
-        return getDataManager().load(domainClass).view(view).list();
+        throw new NotImplementedException();
     }
 
     @Override

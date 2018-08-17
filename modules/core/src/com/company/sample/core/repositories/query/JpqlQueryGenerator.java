@@ -148,35 +148,38 @@ public final class JpqlQueryGenerator {
 
         sql.append(part.getProperty());
 
+        String paramName = part.getProperty().getLeafProperty().getSegment();
         switch (part.getType()) {
             case SIMPLE_PROPERTY:
-                String paramName = part.getProperty().getLeafProperty().getSegment();
                 sql.append(" = :").append(paramName);
                 parameters.add(paramName);
                 break;
             case NEGATING_SIMPLE_PROPERTY:
-                sql.append("<> ?");
+                sql.append("<> :").append(paramName);
                 break;
+            case AFTER:
             case GREATER_THAN:
-                sql.append("> ?");
+                sql.append("> :").append(paramName);
+                parameters.add(paramName);
                 break;
             case GREATER_THAN_EQUAL:
-                sql.append(">= ?");
+                sql.append(">= :").append(paramName);
+                parameters.add(paramName);
                 break;
+            case BEFORE:
             case LESS_THAN:
-                sql.append("< ?");
+                sql.append("< :").append(paramName);
+                parameters.add(paramName);
                 break;
             case LESS_THAN_EQUAL:
-                sql.append("<= ?");
+                sql.append("<= :").append(paramName);
+                parameters.add(paramName);
                 break;
             case IS_NOT_NULL:
                 sql.append(" IS NOT NULL");
                 break;
             case IS_NULL:
                 sql.append(" IS NULL");
-                break;
-            case BETWEEN:
-                sql.append(" BETWEEN ? AND ?");
                 break;
             case FALSE:
                 sql.append(" = FALSE");
@@ -185,35 +188,43 @@ public final class JpqlQueryGenerator {
                 sql.append(" = TRUE");
                 break;
             case CONTAINING:
-                sql.append(" LIKE '%' || ? || '%'");
+                sql.append(" LIKE '%' || ").append(paramName).append(" || '%'");
+                parameters.add(paramName);
                 break;
             case NOT_CONTAINING:
-                sql.append(" NOT LIKE '%' || ? || '%'");
+                sql.append(" NOT LIKE '%' || ").append(paramName).append(" || '%'");
+                parameters.add(paramName);
                 break;
             case LIKE:
-                sql.append(" LIKE '%' || ? || '%'");
+                sql.append(" LIKE '%' || ").append(paramName).append(" || '%'");
+                parameters.add(paramName);
                 break;
             case NOT_LIKE:
-                sql.append(" NOT LIKE '%' || ? || '%'");
+                sql.append(" NOT LIKE '%' || ").append(paramName).append(" || '%'");
+                parameters.add(paramName);
                 break;
             case STARTING_WITH:
-                sql.append(" LIKE  ? || '%'");
+                sql.append(" LIKE  ").append(paramName).append(" || '%'");
+                parameters.add(paramName);
                 break;
             case ENDING_WITH:
-                sql.append(" LIKE '%' || ?");
+                sql.append(" LIKE '%' || ").append(paramName);
+                parameters.add(paramName);
                 break;
             case IN:
-                sql.append(" IN ?");
+                sql.append(" IN :").append(paramName);
+                parameters.add(paramName);
                 break;
             case NOT_IN:
-                sql.append(" NOT IN ?");
+                sql.append(" NOT IN :").append(paramName);
+                parameters.add(paramName);
                 break;
             case REGEX:
-                sql.append(" REGEXP ?");
+                sql.append(" REGEXP :").append(paramName);
+                parameters.add(paramName);
                 break;
+            case BETWEEN:
             case NEAR:
-            case AFTER:
-            case BEFORE:
             case EXISTS:
             default:
                 throw new UnsupportedOperationException(part.getType() + " is not supported!");

@@ -5,6 +5,7 @@ import com.company.sample.core.repositories.config.CubaView;
 import com.company.sample.entity.Customer;
 import com.company.sample.entity.SalesOrder;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,5 +19,9 @@ public interface OrderRepository extends CubaJpaRepository<SalesOrder, UUID> {
     long countSalesOrdersByCustomer(Customer customer);
 
     long countSalesOrdersByCustomerAddressCity (String city);
+
+    List<SalesOrder> findSalesOrderByDateAfter(Date date);
+
+    List<SalesOrder> findSalesOrderByDateBefore(Date date);
 
 }

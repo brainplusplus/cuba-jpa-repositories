@@ -2,10 +2,8 @@ package com.company.sample.core;
 
 import com.company.sample.SampleTestContainer;
 import com.company.sample.core.repositories.CustomerRepository;
-import com.company.sample.core.repositories.OrderRepository;
 import com.company.sample.entity.Address;
 import com.company.sample.entity.Customer;
-import com.company.sample.entity.SalesOrder;
 import com.haulmont.bali.db.MapHandler;
 import com.haulmont.bali.db.QueryRunner;
 import com.haulmont.cuba.core.Persistence;
@@ -21,7 +19,8 @@ import org.junit.Test;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.SQLException;
-import java.util.Date;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class SpringDataRepositoryTest {
+public class SpringCustomerRepositoryTest {
 
     @ClassRule
     public static SampleTestContainer cont = SampleTestContainer.Common.INSTANCE;
@@ -39,18 +38,15 @@ public class SpringDataRepositoryTest {
     private Persistence persistence;
     private Metadata metadata;
     private CustomerRepository customerRepository;
-    private OrderRepository orderRepository;
     private EntityStates entityStates;
 
     private Customer customer1, customer2, customer3;
-    private SalesOrder order1, order2, order3;
 
     @Before
     public void setUp() throws Exception {
         persistence = cont.persistence();
         metadata = cont.metadata();
         customerRepository = AppBeans.get(CustomerRepository.class);
-        orderRepository = AppBeans.get(OrderRepository.class);
         entityStates = AppBeans.get(EntityStates.class);
 
         customer1 = metadata.create(Customer.class);
@@ -69,29 +65,10 @@ public class SpringDataRepositoryTest {
         customer3.getAddress().setCity("Springfield");
 
 
-        order1 = metadata.create(SalesOrder.class);
-        order1.setCustomer(customer1);
-        order1.setNumber("111");
-        order1.setDate(new Date());
-
-
-        order2 = metadata.create(SalesOrder.class);
-        order2.setCustomer(customer1);
-        order2.setNumber("112");
-        order2.setDate(new Date());
-
-        order3 = metadata.create(SalesOrder.class);
-        order3.setCustomer(customer2);
-        order3.setNumber("113");
-        order3.setDate(new Date());
-
         persistence.runInTransaction(em -> {
             em.persist(customer1);
             em.persist(customer2);
             em.persist(customer3);
-            em.persist(order1);
-            em.persist(order2);
-            em.persist(order3);
         });
     }
 
@@ -138,27 +115,6 @@ public class SpringDataRepositoryTest {
     }
 
     @Test
-    public void testCountOrdersByCustomer(){
-        long first = orderRepository.countSalesOrdersByCustomer(customer1);
-        assertEquals(2, first);
-        long second = orderRepository.countSalesOrdersByCustomer(customer2);
-        assertEquals(1, second);
-        long third = orderRepository.countSalesOrdersByCustomer(customer3);
-        assertEquals(0, third);
-    }
-
-    @Test
-    public void testCountOrdersByCustomerCity(){
-        long first = orderRepository.countSalesOrdersByCustomerAddressCity("Samara");
-        assertEquals(2, first);
-        long second = orderRepository.countSalesOrdersByCustomerAddressCity("Springfield");
-        assertEquals(1, second);
-        long third = orderRepository.countSalesOrdersByCustomerAddressCity("London");
-        assertEquals(0, third);
-    }
-
-
-    @Test
     public void testDeleteCustomer() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);
@@ -200,7 +156,7 @@ public class SpringDataRepositoryTest {
 
 
     @Test
-    public void testFindById() {
+    public void testFindCustomerById() {
         Customer customer;
         customer = customerRepository.findOne(customer1.getId());
         assertEquals(customer1, customer);
@@ -208,14 +164,14 @@ public class SpringDataRepositoryTest {
     }
 
     @Test
-    public void testFindByProperty() {
+    public void testFindCustomerByName() {
         List<Customer> customers = customerRepository.findByName(customer1.getName());
         assertEquals(1, customers.size());
         assertEquals(customer1, customers.get(0));
     }
 
     @Test
-    public void testFindByPropertyOfEmbedded() {
+    public void testFindCustomerByAddressCity() {
         List<Customer> customers = customerRepository.findByAddressCity(customer1.getAddress().getCity());
         assertEquals(1, customers.size());
         assertEquals(customer1, customers.get(0));
@@ -230,16 +186,13 @@ public class SpringDataRepositoryTest {
     }
 
     @Test
-    public void testQueryOrderByCustomerWithAndClause(){
-        List<SalesOrder> orders = orderRepository.findByCustomerNameAndCustomerAddressCity("some cust 2", "Springfield");
-        assertEquals(1, orders.size());
-        assertTrue(orders.contains(order3));
+    public void testQueryWithInClause(){
+        List<Customer> customers = customerRepository.findByNameIsIn(Arrays.asList(customer1.getName(), customer2.getName()));
+        assertEquals(2, customers.size());
+        assertTrue(customers.contains(customer1) && customers.contains(customer2));
+
+        customers = customerRepository.findByNameIsIn(Collections.singletonList("Fake Name Should not be found"));
+        assertTrue(CollectionUtils.isEmpty(customers));
     }
 
-    @Test
-    public void testFindByAssociationProperty() {
-        List<SalesOrder> orders = orderRepository.findByCustomer(customer1);
-        assertEquals(2, orders.size());
-        assertTrue(orders.contains(order1) && orders.contains(order2));
-    }
 }

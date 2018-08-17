@@ -14,7 +14,9 @@ public interface CustomerRepository extends CubaJpaRepository<Customer, UUID> {
 
     List<Customer> findByAddressCity(String city);
 
-    long countCustomersByAddressCity(String city); //TODO doesn't work due to DataManager limitations
+    List<Customer> findByNameIsIn(List<String> names);
+
+    long countCustomersByAddressCity(String city);
 
     void removeByName(String name); //TODO doesn't work due to DataManager limitations
 
