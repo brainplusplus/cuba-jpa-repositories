@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Query implementation for CUBA platform. If you need different types of queries, you can either extend this class or implement parent interface.
+ * @link CubaQueryLookupStrategy is responsible for generating Query implementations based on interface method names that will be executed by the CUBA platform.
+ * @see RepositoryQuery
+ */
 public abstract class CubaAbstractQuery implements RepositoryQuery {
 
     private static final Log log = LogFactory.getLog(CubaDeleteQuery.class.getName());
@@ -66,6 +71,12 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
         return doExecute(query, parameters);
     }
 
+    /**
+     * Method to generate JPQL Metadata based on query string.
+     * @param method interface query method metadata.
+     * @param query query string.
+     * @return Metadata that will be used for query execution.
+     */
     protected JpqlMetadata generateQueryMetadata(Method method, String query) {
         List<String> parameters = new ArrayList<>();
         Matcher m = Pattern.compile("(:[a-zA-Z]+)").matcher(query);
@@ -74,22 +85,36 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
             String name = query.substring(m.start(), m.end()).replaceAll(":", "");
             parameters.add(name);
         }
-        JpqlMetadata jpqlMetadata = new JpqlMetadata(query, parameters, true);
-        CubaView viewAnnotation = method.getDeclaredAnnotation(CubaView.class);
-        if (viewAnnotation != null){
-            jpqlMetadata.setView(viewAnnotation.value());
-        }
+        JpqlMetadata jpqlMetadata = new JpqlMetadata(query, parameters);
+        setView(method, jpqlMetadata);
         return jpqlMetadata;
     }
 
+    /**
+     * Method to generate JPQL metadata based on query method reflection metadata.
+     * @param method interface query method metadata.
+     * @param metadata JPA repository metadata.
+     * @param qryTree parsed query method name that contains all information for JPQL generation.
+     * @return Metadata that will be used for query execution.
+     */
     protected JpqlMetadata generateQueryMetadata(Method method, RepositoryMetadata metadata, PartTree qryTree) {
         JpqlMetadata jpqlMetadata = JpqlQueryGenerator.generateJpqlMetadata(metadata, qryTree);
-        CubaView viewAnnotation = method.getDeclaredAnnotation(CubaView.class);
-        if (viewAnnotation != null){
-            jpqlMetadata.setView(viewAnnotation.value());
-        }
+        setView(method, jpqlMetadata);
         return jpqlMetadata;
     }
 
+    private void setView(Method method, JpqlMetadata jpqlMetadata) {
+        CubaView viewAnnotation = method.getDeclaredAnnotation(CubaView.class);
+        if (viewAnnotation != null) {
+            jpqlMetadata.setView(viewAnnotation.value());
+        }
+    }
+
+    /**
+     * Method that performes query execution.
+     * @param query JPQL CUBA query that should be executed.
+     * @param parameters parameters values.
+     * @return query execution result.
+     */
     protected abstract Object doExecute(FluentLoader.ByQuery query, Object[] parameters);
 }

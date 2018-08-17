@@ -15,4 +15,7 @@ public interface CubaJpaRepository<T extends Entity<ID>, ID extends Serializable
 
     Iterable<T> findAll(Iterable<ID> ids, String view);
 
+    String getDefaultViewName();
+
+    void setDefaultViewName(String defaultViewName);
 }

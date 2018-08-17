@@ -7,18 +7,11 @@ public class JpqlMetadata {
 
     private String jpql;
     private List<String> parameterNames;
-    private boolean ordinal;
     private String view = "_local";
 
-    public JpqlMetadata(String jpql, List<String> parameterNames, boolean ordinal) {
+    public JpqlMetadata(String jpql, List<String> parameterNames) {
         this.jpql = jpql;
         this.parameterNames = parameterNames;
-        this.ordinal = ordinal;
-    }
-
-    public JpqlMetadata(String jpql, List<String> parameterNames, boolean ordinal, String view) {
-        this(jpql, parameterNames, ordinal);
-        this.view = view;
     }
 
     public String getJpql() {
@@ -27,10 +20,6 @@ public class JpqlMetadata {
 
     public List<String> getParameterNames() {
         return Collections.unmodifiableList(parameterNames);
-    }
-
-    public boolean isOrdinal() {
-        return ordinal;
     }
 
     public String getView() {
@@ -46,7 +35,6 @@ public class JpqlMetadata {
         return "JpqlMetadata{" +
                 "jpql='" + jpql + '\'' +
                 ", parameterNames=" + parameterNames +
-                ", ordinal=" + ordinal +
                 ", view='" + view + '\'' +
                 '}';
     }

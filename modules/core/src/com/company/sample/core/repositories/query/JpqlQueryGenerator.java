@@ -64,7 +64,7 @@ public final class JpqlQueryGenerator {
             sql.append(" LIMIT ");
             sql.append(parts.getMaxResults().intValue());
         }
-        return new JpqlMetadata(sql.toString(), parameters, false);
+        return new JpqlMetadata(sql.toString(), parameters);
     }
 
     private static void addWhereClause(PartTree parts, StringBuilder sql, List<String> parameters) {
