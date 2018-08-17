@@ -64,7 +64,7 @@ public class SpringDataRepositoryTest {
         customer2.getAddress().setCity("Springfield");
 
         customer3 = metadata.create(Customer.class);
-        customer3.setName("some cust 3");
+        customer3.setName("another cust 3");
         customer3.setAddress(new Address());
         customer3.getAddress().setCity("Springfield");
 
@@ -227,6 +227,13 @@ public class SpringDataRepositoryTest {
         assertFalse(CollectionUtils.isEmpty(customers));
         assertEquals(1, customers.size());
         assertEquals(customer1, customers.get(0));
+    }
+
+    @Test
+    public void testQueryOrderByCustomerWithAndClause(){
+        List<SalesOrder> orders = orderRepository.findByCustomerNameAndCustomerAddressCity("some cust 2", "Springfield");
+        assertEquals(1, orders.size());
+        assertTrue(orders.contains(order3));
     }
 
     @Test
