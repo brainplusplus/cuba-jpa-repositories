@@ -24,8 +24,8 @@ public @interface EnableCubaRepositories {
 
     /**
      * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation declarations e.g.:
-     * {@code @EnableIgniteRepositories("org.my.pkg")} instead of
-     * {@code @EnableIgniteRepositories(basePackages="org.my.pkg")}.
+     * {@code @EnableCubaRepositories("org.my.pkg")} instead of
+     * {@code @EnableCubaRepositories(basePackages="org.my.pkg")}.
      */
     String[] value() default {};
 

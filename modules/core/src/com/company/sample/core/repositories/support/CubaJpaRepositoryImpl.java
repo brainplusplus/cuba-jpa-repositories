@@ -5,9 +5,11 @@ import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import org.apache.commons.lang.NotImplementedException;
+import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
 
+@NoRepositoryBean
 public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> implements CubaJpaRepository<T, ID> {
 
     private String defaultViewName = "_local";
