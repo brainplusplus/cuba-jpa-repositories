@@ -124,7 +124,7 @@ public class SpringOrderRepositoryTest {
     @Test
     public void testQueryOrderByCustomerWithAndClause(){
         List<SalesOrder> orders = orderRepository.findByCustomerNameAndCustomerAddressCity("some cust 2", "Springfield");
-        assertEquals(1, orders.size());
+        assertEquals(2, orders.size());
         assertTrue(orders.contains(order3));
     }
 
