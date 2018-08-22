@@ -1,5 +1,7 @@
 package com.company.sample.core.repositories.query;
 
+import com.haulmont.cuba.core.global.View;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -7,7 +9,7 @@ public class JpqlMetadata {
 
     private String jpql;
     private List<String> parameterNames;
-    private String view = "_local";
+    private String view = View.LOCAL;
 
     public JpqlMetadata(String jpql, List<String> parameterNames) {
         this.jpql = jpql;
