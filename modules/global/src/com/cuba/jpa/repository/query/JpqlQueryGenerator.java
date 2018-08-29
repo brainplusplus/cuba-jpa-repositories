@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.company.sample.core.repositories.query;
+package com.cuba.jpa.repository.query;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Ignite query generator for Spring Data framework.
+ * Ignite com.cuba.jpa.repository.query generator for Spring Data framework.
  */
 public final class JpqlQueryGenerator {
 
@@ -92,7 +92,7 @@ public final class JpqlQueryGenerator {
     }
 
     /**
-     * Add a dynamic part of query for the sorting support.
+     * Add a dynamic part of com.cuba.jpa.repository.query for the sorting com.cuba.jpa.repository.support.
      *
      * @param sql  SQL text string.
      * @param sort Sort method.
@@ -125,7 +125,7 @@ public final class JpqlQueryGenerator {
     }
 
     /**
-     * Add a dynamic part of a query for the pagination support.
+     * Add a dynamic part of a com.cuba.jpa.repository.query for the pagination com.cuba.jpa.repository.support.
      *
      * @param sql      Builder instance.
      * @param pageable Pageable instance.

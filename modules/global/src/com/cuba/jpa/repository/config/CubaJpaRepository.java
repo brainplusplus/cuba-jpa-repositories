@@ -1,4 +1,4 @@
-package com.company.sample.core.repositories.config;
+package com.cuba.jpa.repository.config;
 
 import com.haulmont.cuba.core.entity.Entity;
 import org.springframework.data.repository.CrudRepository;

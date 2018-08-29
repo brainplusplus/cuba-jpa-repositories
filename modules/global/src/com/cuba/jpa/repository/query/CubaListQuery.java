@@ -1,20 +1,21 @@
-package com.company.sample.core.repositories.query;
+package com.cuba.jpa.repository.query;
 
 import com.haulmont.cuba.core.global.FluentLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
+import org.springframework.data.repository.query.parser.PartTree;
 
 import java.lang.reflect.Method;
 
-public class CubaJpqlQuery extends CubaAbstractQuery {
+public class CubaListQuery extends CubaAbstractQuery {
 
-    private static final Log log = LogFactory.getLog(CubaJpqlQuery.class.getName());
+    private static final Log log = LogFactory.getLog(CubaListQuery.class.getName());
 
-    public CubaJpqlQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, String query) {
+    public CubaListQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
         super(method, metadata, factory);
-        jpql = generateQueryMetadata(method, query);
+        jpql = generateQueryMetadata(method, metadata, qryTree);
     }
 
     @Override

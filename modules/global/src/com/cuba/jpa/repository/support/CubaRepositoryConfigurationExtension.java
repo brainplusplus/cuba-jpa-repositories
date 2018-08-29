@@ -1,6 +1,6 @@
-package com.company.sample.core.repositories.support;
+package com.cuba.jpa.repository.support;
 
-import com.company.sample.core.repositories.config.CubaJpaRepository;
+import com.cuba.jpa.repository.config.CubaJpaRepository;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 
 import java.util.Collection;

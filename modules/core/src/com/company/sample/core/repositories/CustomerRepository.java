@@ -1,8 +1,8 @@
 package com.company.sample.core.repositories;
 
-import com.company.sample.core.repositories.config.CubaJpaRepository;
-import com.company.sample.core.repositories.config.CubaView;
-import com.company.sample.core.repositories.config.JpqlQuery;
+import com.cuba.jpa.repository.config.CubaJpaRepository;
+import com.cuba.jpa.repository.config.CubaView;
+import com.cuba.jpa.repository.config.JpqlQuery;
 import com.company.sample.entity.Customer;
 
 import java.util.List;

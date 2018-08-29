@@ -1,6 +1,6 @@
-package com.company.sample.core.repositories.query;
+package com.cuba.jpa.repository.query;
 
-import com.company.sample.core.repositories.config.CubaView;
+import com.cuba.jpa.repository.config.CubaView;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
@@ -72,16 +72,16 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
     }
 
     /**
-     * Method to generate JPQL Metadata based on query string.
-     * @param method interface query method metadata.
-     * @param query query string.
-     * @return Metadata that will be used for query execution.
+     * Method to generate JPQL Metadata based on com.cuba.jpa.repository.query string.
+     * @param method interface com.cuba.jpa.repository.query method metadata.
+     * @param query com.cuba.jpa.repository.query string.
+     * @return Metadata that will be used for com.cuba.jpa.repository.query execution.
      */
     protected JpqlMetadata generateQueryMetadata(Method method, String query) {
         List<String> parameters = new ArrayList<>();
         Matcher m = Pattern.compile("(:[a-zA-Z]+)").matcher(query);
         while (m.find()){
-            //extracting name from query removing colon
+            //extracting name from com.cuba.jpa.repository.query removing colon
             String name = query.substring(m.start(), m.end()).replaceAll(":", "");
             parameters.add(name);
         }
@@ -91,11 +91,11 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
     }
 
     /**
-     * Method to generate JPQL metadata based on query method reflection metadata.
-     * @param method interface query method metadata.
+     * Method to generate JPQL metadata based on com.cuba.jpa.repository.query method reflection metadata.
+     * @param method interface com.cuba.jpa.repository.query method metadata.
      * @param metadata JPA repository metadata.
-     * @param qryTree parsed query method name that contains all information for JPQL generation.
-     * @return Metadata that will be used for query execution.
+     * @param qryTree parsed com.cuba.jpa.repository.query method name that contains all information for JPQL generation.
+     * @return Metadata that will be used for com.cuba.jpa.repository.query execution.
      */
     protected JpqlMetadata generateQueryMetadata(Method method, RepositoryMetadata metadata, PartTree qryTree) {
         JpqlMetadata jpqlMetadata = JpqlQueryGenerator.generateJpqlMetadata(metadata, qryTree);
@@ -111,10 +111,10 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
     }
 
     /**
-     * Method that performes query execution.
-     * @param query JPQL CUBA query that should be executed.
+     * Method that performes com.cuba.jpa.repository.query execution.
+     * @param query JPQL CUBA com.cuba.jpa.repository.query that should be executed.
      * @param parameters parameters values.
-     * @return query execution result.
+     * @return com.cuba.jpa.repository.query execution result.
      */
     protected abstract Object doExecute(FluentLoader.ByQuery query, Object[] parameters);
 }

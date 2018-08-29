@@ -1,4 +1,4 @@
-package com.company.sample.core.repositories.support;
+package com.cuba.jpa.repository.support;
 
 import com.haulmont.cuba.core.entity.Entity;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;

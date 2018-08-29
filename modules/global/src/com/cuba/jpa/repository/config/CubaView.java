@@ -1,4 +1,4 @@
-package com.company.sample.core.repositories.config;
+package com.cuba.jpa.repository.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

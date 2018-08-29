@@ -1,6 +1,6 @@
-package com.company.sample.core.repositories.query;
+package com.cuba.jpa.repository.query;
 
-import com.company.sample.core.repositories.config.JpqlQuery;
+import com.cuba.jpa.repository.config.JpqlQuery;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;

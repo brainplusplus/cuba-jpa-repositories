@@ -72,6 +72,20 @@ configure([globalModule, coreModule, webModule]) {
 }
 
 configure(globalModule) {
+
+    dependencies {
+        compile(group: 'org.springframework.data', name: 'spring-data-commons', version: '1.13.13.RELEASE') {
+            exclude(group: 'org.hibernate', module: 'hibernate-core')
+            exclude(group: 'org.springframework', module: 'spring-context')
+            exclude(group: 'org.springframework', module: 'spring-core')
+            exclude(group: 'org.springframework', module: 'spring-beans')
+            exclude(group: 'org.springframework', module: 'spring-tx')
+            exclude(group: 'org.springframework', module: 'spring-orm')
+            exclude(group: 'org.springframework', module: 'spring-aop')
+            exclude(group: 'org.springframework', module: 'spring-expression')
+        }
+    }
+
     task enhance(type: CubaEnhancing)
 
     
@@ -89,16 +103,6 @@ configure(coreModule) {
         provided(servletApi)
         jdbc(hsql)
         testRuntime(hsql)
-        compile(group: 'org.springframework.data', name: 'spring-data-commons', version: '1.13.13.RELEASE') {
-            exclude(group: 'org.hibernate', module: 'hibernate-core')
-            exclude(group: 'org.springframework', module: 'spring-context')
-            exclude(group: 'org.springframework', module: 'spring-core')
-            exclude(group: 'org.springframework', module: 'spring-beans')
-            exclude(group: 'org.springframework', module: 'spring-tx')
-            exclude(group: 'org.springframework', module: 'spring-orm')
-            exclude(group: 'org.springframework', module: 'spring-aop')
-            exclude(group: 'org.springframework', module: 'spring-expression')
-        }
     }
 
     task cleanConf(description: 'Cleans up conf directory') {

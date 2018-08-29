@@ -1,4 +1,4 @@
-package com.company.sample.core.repositories.support;
+package com.cuba.jpa.repository.support;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

@@ -1,7 +1,7 @@
-package com.company.sample.core.repositories.config;
+package com.cuba.jpa.repository.config;
 
-import com.company.sample.core.repositories.support.CubaRepositoryFactoryBean;
-import com.company.sample.core.repositories.support.CubaJpaRepositoryImpl;
+import com.cuba.jpa.repository.support.CubaRepositoryFactoryBean;
+import com.cuba.jpa.repository.support.CubaJpaRepositoryImpl;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.repository.query.QueryLookupStrategy;
@@ -71,10 +71,10 @@ public @interface EnableCubaRepositories {
     String namedQueriesLocation() default "";
 
     /**
-     * Returns the key of the {@link QueryLookupStrategy} to be used for lookup queries for query methods. Defaults to
+     * Returns the key of the {@link QueryLookupStrategy} to be used for lookup queries for com.cuba.jpa.repository.query methods. Defaults to
      * {@link QueryLookupStrategy.Key#CREATE_IF_NOT_FOUND}.
      *
-     * @return Key of the {@link QueryLookupStrategy} to be used for lookup queries for query methods.
+     * @return Key of the {@link QueryLookupStrategy} to be used for lookup queries for com.cuba.jpa.repository.query methods.
      */
     QueryLookupStrategy.Key queryLookupStrategy() default QueryLookupStrategy.Key.CREATE_IF_NOT_FOUND;
 

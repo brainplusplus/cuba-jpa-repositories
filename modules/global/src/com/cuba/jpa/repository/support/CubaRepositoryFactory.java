@@ -1,6 +1,6 @@
-package com.company.sample.core.repositories.support;
+package com.cuba.jpa.repository.support;
 
-import com.company.sample.core.repositories.query.CubaQueryLookupStrategy;
+import com.cuba.jpa.repository.query.CubaQueryLookupStrategy;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;

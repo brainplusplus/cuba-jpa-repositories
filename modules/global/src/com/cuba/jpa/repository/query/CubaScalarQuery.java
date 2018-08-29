@@ -1,4 +1,4 @@
-package com.company.sample.core.repositories.query;
+package com.cuba.jpa.repository.query;
 
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
