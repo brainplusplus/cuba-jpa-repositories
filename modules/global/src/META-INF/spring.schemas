@@ -1,2 +1,2 @@
-http\://www.cuba-platform.org/schema/cuba-repositories.xsd=com/cuba/jpa/repository/config/cuba-repositories.xsd
+http\://www.cuba-platform.org/schema/cuba-repositories.xsd=com/haulmont/cuba/jpa/repository/config/cuba-repositories.xsd
  
