@@ -72,16 +72,16 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
     }
 
     /**
-     * Method to generate JPQL Metadata based on com.haulmont.cuba.jpa.repository.query string.
-     * @param method interface com.haulmont.cuba.jpa.repository.query method metadata.
-     * @param query com.haulmont.cuba.jpa.repository.query string.
-     * @return Metadata that will be used for com.haulmont.cuba.jpa.repository.query execution.
+     * Method to generate JPQL Metadata based on com.haulmont.addons.cuba.jpa.repositories.query string.
+     * @param method interface com.haulmont.addons.cuba.jpa.repositories.query method metadata.
+     * @param query com.haulmont.addons.cuba.jpa.repositories.query string.
+     * @return Metadata that will be used for com.haulmont.addons.cuba.jpa.repositories.query execution.
      */
     protected JpqlMetadata generateQueryMetadata(Method method, String query) {
         List<String> parameters = new ArrayList<>();
         Matcher m = Pattern.compile("(:[a-zA-Z]+)").matcher(query);
         while (m.find()){
-            //extracting name from com.haulmont.cuba.jpa.repository.query removing colon
+            //extracting name from com.haulmont.addons.cuba.jpa.repositories.query removing colon
             String name = query.substring(m.start(), m.end()).replaceAll(":", "");
             parameters.add(name);
         }
@@ -91,11 +91,11 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
     }
 
     /**
-     * Method to generate JPQL metadata based on com.haulmont.cuba.jpa.repository.query method reflection metadata.
-     * @param method interface com.haulmont.cuba.jpa.repository.query method metadata.
+     * Method to generate JPQL metadata based on com.haulmont.addons.cuba.jpa.repositories.query method reflection metadata.
+     * @param method interface com.haulmont.addons.cuba.jpa.repositories.query method metadata.
      * @param metadata JPA repository metadata.
-     * @param qryTree parsed com.haulmont.cuba.jpa.repository.query method name that contains all information for JPQL generation.
-     * @return Metadata that will be used for com.haulmont.cuba.jpa.repository.query execution.
+     * @param qryTree parsed com.haulmont.addons.cuba.jpa.repositories.query method name that contains all information for JPQL generation.
+     * @return Metadata that will be used for com.haulmont.addons.cuba.jpa.repositories.query execution.
      */
     protected JpqlMetadata generateQueryMetadata(Method method, RepositoryMetadata metadata, PartTree qryTree) {
         JpqlMetadata jpqlMetadata = JpqlQueryGenerator.generateJpqlMetadata(metadata, qryTree);
@@ -111,10 +111,10 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
     }
 
     /**
-     * Method that performes com.haulmont.cuba.jpa.repository.query execution.
-     * @param query JPQL CUBA com.haulmont.cuba.jpa.repository.query that should be executed.
+     * Method that performes com.haulmont.addons.cuba.jpa.repositories.query execution.
+     * @param query JPQL CUBA com.haulmont.addons.cuba.jpa.repositories.query that should be executed.
      * @param parameters parameters values.
-     * @return com.haulmont.cuba.jpa.repository.query execution result.
+     * @return com.haulmont.addons.cuba.jpa.repositories.query execution result.
      */
     protected abstract Object doExecute(FluentLoader.ByQuery query, Object[] parameters);
 }

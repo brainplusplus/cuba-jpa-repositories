@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Ignite com.haulmont.cuba.jpa.repository.query generator for Spring Data framework.
+ * Ignite com.haulmont.addons.cuba.jpa.repositories.repository.query generator for Spring Data framework.
  */
 public final class JpqlQueryGenerator {
 
@@ -92,7 +92,7 @@ public final class JpqlQueryGenerator {
     }
 
     /**
-     * Add a dynamic part of com.haulmont.cuba.jpa.repository.query for the sorting com.haulmont.cuba.jpa.repository.support.
+     * Add a dynamic part of com.haulmont.addons.cuba.jpa.repositories.query for the sorting com.haulmont.addons.cuba.jpa..repository.support.
      *
      * @param sql  SQL text string.
      * @param sort Sort method.
@@ -125,7 +125,7 @@ public final class JpqlQueryGenerator {
     }
 
     /**
-     * Add a dynamic part of a com.haulmont.cuba.jpa.repository.query for the pagination com.haulmont.cuba.jpa.repository.support.
+     * Add a dynamic part of a com.haulmont.addons.cuba.jpa..repository.query for the pagination com.haulmont.addons.cuba.jpa..repository.support.
      *
      * @param sql      Builder instance.
      * @param pageable Pageable instance.

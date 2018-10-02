@@ -6,14 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to specify com.haulmont.cuba.jpa.repository.query for CUBA Query methods
+ * Annotation to specify com.haulmont.addons.cuba.jpa..repository.query for CUBA Query methods
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JpqlQuery {
 
     /**
-     * JPA com.haulmont.cuba.jpa.repository.query string
+     * JPA com.haulmont.addons.cuba.jpa..repository.query string
      * @return
      */
     String value();

@@ -71,10 +71,10 @@ public @interface EnableCubaRepositories {
     String namedQueriesLocation() default "";
 
     /**
-     * Returns the key of the {@link QueryLookupStrategy} to be used for lookup queries for com.haulmont.cuba.jpa.repository.query methods. Defaults to
+     * Returns the key of the {@link QueryLookupStrategy} to be used for lookup queries for com.haulmont.addons.cuba.jpa..repository.query methods. Defaults to
      * {@link QueryLookupStrategy.Key#CREATE_IF_NOT_FOUND}.
      *
-     * @return Key of the {@link QueryLookupStrategy} to be used for lookup queries for com.haulmont.cuba.jpa.repository.query methods.
+     * @return Key of the {@link QueryLookupStrategy} to be used for lookup queries for com.haulmont.addons.cuba.jpa..repository.query methods.
      */
     QueryLookupStrategy.Key queryLookupStrategy() default QueryLookupStrategy.Key.CREATE_IF_NOT_FOUND;
 
