@@ -31,7 +31,7 @@ apply(plugin: 'cuba')
 
 cuba {
     artifact {
-        group = 'com.haulmont.addons.cuba-jpa-repositories'
+        group = 'com.haulmont.addons.cuba.jpa.repositories'
         version = '0.1'
         isSnapshot = true
     }
