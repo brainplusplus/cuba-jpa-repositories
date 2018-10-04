@@ -5,5 +5,6 @@
             name="global">
         <artifact appJar="true"
                   name="cuba-jpa-repositories-global"/>
+        <property name="description" value="JPA Repositories"/>
     </module>
 </app-component>
