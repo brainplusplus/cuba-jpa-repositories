@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Ignite com.haulmont.addons.cuba.jpa.repositories.repository.query generator for Spring Data framework.
+ * Based on Apache Ignite codebase.
+ * JPQL query generator that uses {@link PartTree} class for proper generation.
  */
 public final class JpqlQueryGenerator {
 
