@@ -17,6 +17,8 @@
 
 package com.haulmont.addons.cuba.jpa.repositories.query;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -32,6 +34,9 @@ import java.util.List;
  * JPQL query generator that uses {@link PartTree} class for proper generation.
  */
 public final class JpqlQueryGenerator {
+
+    private static final Log log = LogFactory.getLog(JpqlQueryGenerator.class.getName());
+
 
     public static JpqlMetadata generateJpqlMetadata(RepositoryMetadata metadata, PartTree parts) {
         StringBuilder sql = new StringBuilder();
@@ -65,6 +70,9 @@ public final class JpqlQueryGenerator {
             sql.append(" LIMIT ");
             sql.append(parts.getMaxResults().intValue());
         }
+
+        log.debug(String.format("Query generated %s ", sql.toString()));
+
         return new JpqlMetadata(sql.toString(), parameters);
     }
 

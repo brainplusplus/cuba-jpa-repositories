@@ -4,6 +4,7 @@ import com.company.sample.SampleTestContainer;
 import com.company.sample.core.repositories.CustomerRepository;
 import com.company.sample.entity.Address;
 import com.company.sample.entity.Customer;
+import com.google.common.collect.Lists;
 import com.haulmont.bali.db.MapHandler;
 import com.haulmont.bali.db.QueryRunner;
 import com.haulmont.cuba.core.Persistence;
@@ -19,6 +20,7 @@ import org.junit.Test;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -103,6 +105,22 @@ public class SpringCustomerRepositoryTest {
         assertEquals(3, cnt);
     }
 
+    @Test
+    public void testFindAll() throws SQLException {
+        List<Customer> customers = Lists.newArrayList(customerRepository.findAll());
+        assertEquals(3, customers.size());
+        assertTrue(customers.contains(customer1));
+        assertTrue(customers.contains(customer2));
+        assertTrue(customers.contains(customer3));
+    }
+
+    @Test
+    public void testFindAllById() throws SQLException {
+        List<Customer> customers = Lists.newArrayList(customerRepository.findAll(Arrays.asList(customer1.getId(), customer2.getId())));
+        assertEquals(2, customers.size());
+        assertTrue(customers.contains(customer1));
+        assertTrue(customers.contains(customer2));
+    }
 
     @Test
     public void testCountCustomersByCity(){

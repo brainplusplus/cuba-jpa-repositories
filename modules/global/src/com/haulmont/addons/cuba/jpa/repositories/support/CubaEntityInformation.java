@@ -1,6 +1,9 @@
 package com.haulmont.addons.cuba.jpa.repositories.support;
 
 import com.haulmont.cuba.core.entity.Entity;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.EntityStates;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 
 import java.io.Serializable;
@@ -31,5 +34,11 @@ public class CubaEntityInformation<T, ID extends Serializable> extends AbstractE
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Wrong entity type");
         }
+    }
+
+    @Override
+    public boolean isNew(T entity) {
+        EntityStates entityStates = AppBeans.get(EntityStates.class);
+        return entityStates.isNew(entity);
     }
 }

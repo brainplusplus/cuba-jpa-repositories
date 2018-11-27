@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public abstract class CubaAbstractQuery implements RepositoryQuery {
 
-    private static final Log log = LogFactory.getLog(CubaDeleteQuery.class.getName());
+    private static final Log log = LogFactory.getLog(CubaAbstractQuery.class.getName());
 
     protected final Method method;
     protected final RepositoryMetadata metadata;
@@ -78,6 +78,7 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
      * @return Metadata that will be used for com.haulmont.addons.cuba.jpa.repositories.query execution.
      */
     protected JpqlMetadata generateQueryMetadata(Method method, String query) {
+        log.debug(String.format("Generating query metadata for %s", method));
         List<String> parameters = new ArrayList<>();
         Matcher m = Pattern.compile("(:[a-zA-Z]+)").matcher(query);
         while (m.find()){
@@ -98,6 +99,7 @@ public abstract class CubaAbstractQuery implements RepositoryQuery {
      * @return Metadata that will be used for com.haulmont.addons.cuba.jpa.repositories.query execution.
      */
     protected JpqlMetadata generateQueryMetadata(Method method, RepositoryMetadata metadata, PartTree qryTree) {
+        log.debug(String.format("Generating query metadata for %s", method));
         JpqlMetadata jpqlMetadata = JpqlQueryGenerator.generateJpqlMetadata(metadata, qryTree);
         setView(method, jpqlMetadata);
         return jpqlMetadata;

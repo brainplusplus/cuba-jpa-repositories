@@ -3,12 +3,18 @@ package com.haulmont.addons.cuba.jpa.repositories.support;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.FluentLoader;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.addons.cuba.jpa.repositories.config.CubaJpaRepository;
 import org.apache.commons.lang.NotImplementedException;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @NoRepositoryBean
 public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> implements CubaJpaRepository<T, ID> {
@@ -36,8 +42,16 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public Iterable<T> findAll(Iterable<ID> ids, String view) { //TODO implement search by IDs
-        throw new NotImplementedException();
+    public Iterable<T> findAll(Iterable<ID> ids, String view) {//TODO implement find by ID list
+        if (!ids.iterator().hasNext()) {
+            return Collections.emptyList();
+        }
+        FluentLoader<T, ID> loader = getDataManager().load(domainClass).view(view);
+        List<T> results = new ArrayList<T>();
+        for (ID id : ids) {
+            loader.id(id).optional().ifPresent(results::add);
+        }
+        return results;
     }
 
     @Override
@@ -47,7 +61,11 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
 
     @Override
     public <S extends T> Iterable<S> save(Iterable<S> entities) {
-        throw new NotImplementedException();
+        List<S> savedEntities = new ArrayList<>();
+        for (S entity : entities) {
+            savedEntities.add(save(entity));
+        }
+        return savedEntities;
     }
 
     @Override
@@ -66,14 +84,13 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public Iterable<T> findAll(Iterable<ID> ids) {//TODO implement find by ID list
-        throw new NotImplementedException();
+    public Iterable<T> findAll(Iterable<ID> ids) {
+        return findAll(ids, defaultViewName);
     }
 
     @Override
     public long count() {
-        //return getDataManager().getCount(LoadContext.create(domainClass)); //TODO Effective since 6.10
-        return getDataManager().load(domainClass).view(defaultViewName).list().size();
+        return getDataManager().getCount(LoadContext.create(domainClass));
     }
 
     @Override
