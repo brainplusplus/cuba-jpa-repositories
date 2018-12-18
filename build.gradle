@@ -1,9 +1,6 @@
-
 buildscript {
     ext.cubaVersion = '6.10.1'
     repositories {
-        
-        mavenLocal()
         maven {
             url 'https://repo.cuba-platform.com/content/groups/work'
             credentials {
@@ -11,8 +8,9 @@ buildscript {
                 password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'cuba123')
             }
         }
-        
+
     }
+
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
     }
@@ -54,6 +52,7 @@ configure([globalModule, coreModule]) {
 
 configure(globalModule) {
     apply(plugin: 'maven')
+    apply(plugin: 'maven-publish')
 
     task sourceJar(type: Jar) {
         from file('src')
@@ -84,7 +83,20 @@ configure(globalModule) {
         }
     }
 
-    
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact(sourceJar) {
+                    classifier = 'sources'
+                }
+            }
+        }
+        repositories {
+            mavenLocal()
+        }
+    }
+
 }
 
 configure(coreModule) {
