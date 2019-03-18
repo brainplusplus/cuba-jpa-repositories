@@ -1,7 +1,7 @@
 package com.haulmont.addons.cuba.jpa.repositories.query;
 
 import com.haulmont.cuba.core.global.FluentLoader;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.projection.ProjectionFactory;

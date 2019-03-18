@@ -7,7 +7,7 @@ import com.haulmont.cuba.core.global.FluentLoader;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.addons.cuba.jpa.repositories.config.CubaJpaRepository;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.util.Assert;
 
