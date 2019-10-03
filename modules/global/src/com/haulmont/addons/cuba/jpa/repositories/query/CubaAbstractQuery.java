@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 /**
  * Query implementation for CUBA platform. If you need different types of queries, you can either extend this class or implement parent interface.
- * @link CubaQueryLookupStrategy is responsible for generating Query implementations based on interface method names that will be executed by the CUBA platform.
+ * @see CubaQueryLookupStrategy is responsible for generating Query implementations based on interface method names that will be executed by the CUBA platform.
  * @see RepositoryQuery
  */
 public abstract class CubaAbstractQuery implements RepositoryQuery {

@@ -26,12 +26,14 @@ public @interface EnableCubaRepositories {
      * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation declarations e.g.:
      * {@code @EnableCubaRepositories("org.my.pkg")} instead of
      * {@code @EnableCubaRepositories(basePackages="org.my.pkg")}.
+     * @return list of packages that should be scanned
      */
     String[] value() default {};
 
     /**
      * Base packages to scan for annotated components. {@link #value()} is an alias for (and mutually exclusive with)
      * this attribute. Use {@link #basePackageClasses()} for a type-safe alternative to String-based package names.
+     * @return list of packages that should be scanned
      */
     String[] basePackages() default {};
 
@@ -39,11 +41,13 @@ public @interface EnableCubaRepositories {
      * Type-safe alternative to {@link #basePackages()} for specifying the packages to scan for annotated components.
      * The package of each class specified will be scanned. Consider creating a special no-op marker class or interface
      * in each package that serves no purpose other than being referenced by this attribute.
+     * @return list of packages that should be scanned
      */
     Class<?>[] basePackageClasses() default {};
 
     /**
      * Specifies which types are not eligible for component scanning.
+     * @return filters that exclude some classes from scanning
      */
     Filter[] excludeFilters() default {};
 
@@ -51,6 +55,7 @@ public @interface EnableCubaRepositories {
      * Specifies which types are eligible for component scanning. Further narrows the set of candidate components from
      * everything in {@link #basePackages()} to everything in the base packages that matches the given filter or
      * filters.
+     * @return filters that include classes into scanning
      */
     Filter[] includeFilters() default {};
 
@@ -96,6 +101,7 @@ public @interface EnableCubaRepositories {
     /**
      * Configures whether nested repository-interfaces (e.g. defined as inner classes) should be discovered by the
      * repositories infrastructure.
+     * @return Flag that indicates if we should consider nested repositories during scan
      */
     boolean considerNestedRepositories() default false;
 

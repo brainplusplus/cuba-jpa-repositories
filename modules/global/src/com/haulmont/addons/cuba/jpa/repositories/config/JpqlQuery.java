@@ -14,7 +14,7 @@ public @interface JpqlQuery {
 
     /**
      * JPA com.haulmont.addons.cuba.jpa..repository.query string
-     * @return
+     * @return query that should be executed
      */
     String value();
 

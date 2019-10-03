@@ -1,37 +1,44 @@
 buildscript {
-    ext.cubaVersion = '7.0.2'
+    ext.cubaVersion = '7.1.1'
     repositories {
+        mavenLocal()
+        mavenCentral()
         maven {
-            url 'https://repo.cuba-platform.com/content/groups/work'
-            credentials {
-                username(rootProject.hasProperty('repoUser') ? rootProject['repoUser'] : 'cuba')
-                password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'cuba123')
-            }
+            url "https://plugins.gradle.org/m2/"
         }
-
+        maven {
+            url 'https://dl.bintray.com/cuba-platform/main'
+        }
+        jcenter()
     }
-
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1+'
     }
 }
 
 def modulePrefix = 'cuba-jpa-repositories'
 
-def globalModule = project(":${modulePrefix}-global")
-def coreModule = project(":${modulePrefix}-core")
+def artifactGlobalName = modulePrefix + "-global"
+def artifactCoreName = modulePrefix + "-core"
+
+def globalModule = project(artifactGlobalName)
+def coreModule = project(artifactCoreName)
 
 def servletApi = 'javax.servlet:javax.servlet-api:3.1.0'
-
 
 apply(plugin: 'idea')
 apply(plugin: 'cuba')
 
+def artifactGroup = 'com.haulmont.addons.cuba.jpa.repositories'
+def artifactVersion = '0.1.1'
+def isArtifactSnapshot = false
+
 cuba {
     artifact {
-        group = 'com.haulmont.addons.cuba.jpa.repositories'
-        version = '0.1'
-        isSnapshot = true
+        group = artifactGroup
+        version = artifactVersion
+        isSnapshot = isArtifactSnapshot
     }
     tomcat {
         dir = "$project.rootDir/deploy/tomcat"
@@ -42,28 +49,42 @@ dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
 }
 
-def hsql = 'org.hsqldb:hsqldb:2.2.9'
-
 configure([globalModule, coreModule]) {
-    apply(plugin: 'java')
     apply(plugin: 'idea')
-    apply(plugin: 'cuba')
-}
-
-configure(globalModule) {
+    apply(plugin: 'java')
     apply(plugin: 'maven')
     apply(plugin: 'maven-publish')
+    apply(plugin: 'cuba')
+    apply(plugin: 'com.jfrog.bintray')
 
     task sourceJar(type: Jar) {
         from file('src')
         classifier = 'sources'
     }
 
-    artifacts {
-        archives sourceJar
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
     }
 
+    javadocJar.dependsOn javadoc
+
+    artifacts {
+        archives sourceJar
+        archives javadocJar
+    }
+}
+
+configure(globalModule) {
+    apply(plugin: 'maven')
+    apply(plugin: 'maven-publish')
+
+
     dependencies {
+        if (!JavaVersion.current().isJava8()) {
+            runtime('javax.xml.bind:jaxb-api:2.3.1')
+            runtime('org.glassfish.jaxb:jaxb-runtime:2.3.1')
+        }
         compile(group: 'org.springframework.data', name: 'spring-data-commons', version: '1.13.13.RELEASE') {
             exclude(group: 'org.hibernate', module: 'hibernate-core')
             exclude(group: 'org.springframework', module: 'spring-context')
@@ -85,21 +106,26 @@ configure(globalModule) {
 
     publishing {
         publications {
-            mavenJava(MavenPublication) {
+            publishGlobal(MavenPublication) {
+                groupId = artifactGroup
+                artifactId = artifactGlobalName
+                version = artifactVersion + (cuba.artifact.isSnapshot ? '-SNAPSHOT' : '')
                 from components.java
-                artifact(sourceJar) {
-                    classifier = 'sources'
-                }
+                artifact sourceJar
+                artifact javadocJar
             }
         }
-        repositories {
-            mavenLocal()
-        }
+    }
+
+    bintray {
+        publications = ['publishGlobal']
     }
 
 }
 
 configure(coreModule) {
+
+    def hsql = 'org.hsqldb:hsqldb:2.4.1'
 
     configurations {
         jdbc
@@ -118,6 +144,23 @@ configure(coreModule) {
         test {
             enabled = true
         }
+    }
+
+    publishing {
+        publications {
+            publishCore(MavenPublication) {
+                groupId = artifactGroup
+                artifactId = artifactCoreName
+                version = artifactVersion + (cuba.artifact.isSnapshot ? '-SNAPSHOT' : '')
+                from components.java
+                artifact sourceJar
+                artifact javadocJar
+            }
+        }
+    }
+
+    bintray {
+        publications = ['publishCore']
     }
 
     task cleanConf(description: 'Cleans up conf directory') {
@@ -139,7 +182,6 @@ configure(coreModule) {
     task startDb(type: CubaHsqlStart) {
         dbName = 'cubajparepositories'
     }
-
 
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
         dbms = 'hsql'
@@ -177,4 +219,29 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.3.1'
+}
+
+subprojects {
+    bintray {
+        user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+        key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+
+        // make files public ?
+        publish = true
+        // override existing artifacts?
+        override = true
+
+        // metadata
+        pkg {
+            repo = 'labs'           // your repository name
+            name = 'cuba-jpa-repositories'  // package name - it will be created upon upload
+            userOrg = 'cuba-platform'
+            licenses = ["Apache-2.0"]
+            websiteUrl = 'https://github.com/cuba-rnd/cuba-jpa-repositories'
+            issueTrackerUrl = 'https://github.com/cuba-rnd/cuba-jpa-repositories/issues'
+            vcsUrl = 'https://github.com/cuba-rnd/cuba-jpa-repositories.git' // Mandatory for Open Source projects
+            labels = ['cuba-platform', 'opensource']
+            publicDownloadNumbers = true
+        }
+    }
 }
