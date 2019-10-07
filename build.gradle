@@ -31,7 +31,7 @@ apply(plugin: 'idea')
 apply(plugin: 'cuba')
 
 def artifactGroup = 'com.haulmont.addons.cuba.jpa.repositories'
-def artifactVersion = '0.1.1'
+def artifactVersion = '0.1.2'
 def isArtifactSnapshot = false
 
 cuba {
@@ -144,23 +144,6 @@ configure(coreModule) {
         test {
             enabled = true
         }
-    }
-
-    publishing {
-        publications {
-            publishCore(MavenPublication) {
-                groupId = artifactGroup
-                artifactId = artifactCoreName
-                version = artifactVersion + (cuba.artifact.isSnapshot ? '-SNAPSHOT' : '')
-                from components.java
-                artifact sourceJar
-                artifact javadocJar
-            }
-        }
-    }
-
-    bintray {
-        publications = ['publishCore']
     }
 
     task cleanConf(description: 'Cleans up conf directory') {
