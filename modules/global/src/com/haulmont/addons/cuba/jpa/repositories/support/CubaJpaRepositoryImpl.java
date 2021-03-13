@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @NoRepositoryBean
 public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable> implements CubaJpaRepository<T, ID> {
@@ -60,7 +61,7 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public <S extends T> Iterable<S> save(Iterable<S> entities) {
+    public <S extends T> Iterable<S> saveAll(Iterable<S> entities) {
         List<S> savedEntities = new ArrayList<>();
         for (S entity : entities) {
             savedEntities.add(save(entity));
@@ -69,12 +70,12 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public T findOne(ID id) {
-        return getDataManager().load(domainClass).id(id).view(defaultViewName).one();
+    public Optional<T> findById(ID id) {
+        return Optional.ofNullable(getDataManager().load(domainClass).id(id).view(defaultViewName).one());
     }
 
     @Override
-    public boolean exists(ID id) {
+    public boolean existsById(ID id) {
         return getDataManager().load(domainClass).id(id).optional().isPresent();
     }
 
@@ -84,7 +85,7 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public Iterable<T> findAll(Iterable<ID> ids) {
+    public Iterable<T> findAllById(Iterable<ID> ids) {
         return findAll(ids, defaultViewName);
     }
 
@@ -94,7 +95,7 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public void delete(ID id) { //TODO Need to add removal by entity ID to DataManager
+    public void deleteById(ID id) { //TODO Need to add removal by entity ID to DataManager
         DataManager dataManager = getDataManager();
         T entity = dataManager.load(domainClass).id(id).view(defaultViewName).one();
         dataManager.remove(entity);
@@ -106,7 +107,7 @@ public class CubaJpaRepositoryImpl<T extends Entity<ID>, ID extends Serializable
     }
 
     @Override
-    public void delete(Iterable<? extends T> entities) {
+    public void deleteAll(Iterable<? extends T> entities) {
         entities.forEach(getDataManager()::remove);
     }
 

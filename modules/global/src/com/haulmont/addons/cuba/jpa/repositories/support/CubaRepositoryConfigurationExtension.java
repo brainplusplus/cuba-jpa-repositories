@@ -27,7 +27,7 @@ public class CubaRepositoryConfigurationExtension extends RepositoryConfiguratio
      * {@inheritDoc}
      */
     @Override
-    public String getRepositoryFactoryClassName() {
+    public String getRepositoryFactoryBeanClassName() {
         return CubaRepositoryFactoryBean.class.getName();
     }
 

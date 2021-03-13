@@ -20,11 +20,7 @@ import org.junit.Test;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -116,7 +112,7 @@ public class SpringCustomerRepositoryTest {
 
     @Test
     public void testFindAllById() throws SQLException {
-        List<Customer> customers = Lists.newArrayList(customerRepository.findAll(Arrays.asList(customer1.getId(), customer2.getId())));
+        List<Customer> customers = Lists.newArrayList(customerRepository.findAllById(Arrays.asList(customer1.getId(), customer2.getId())));
         assertEquals(2, customers.size());
         assertTrue(customers.contains(customer1));
         assertTrue(customers.contains(customer2));
@@ -147,8 +143,8 @@ public class SpringCustomerRepositoryTest {
     public void testDeleteCustomer() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);
-            Customer customer = customerRepository.findOne(customer3.getId());
-            customerRepository.delete(customer);
+            Optional<Customer> customer = customerRepository.findById(customer3.getId());
+            customerRepository.delete(customer.get());
             tx.commit();
         }
 
@@ -163,7 +159,7 @@ public class SpringCustomerRepositoryTest {
     public void testDeleteCustomerById() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
             persistence.setSoftDeletion(false);
-            customerRepository.delete(customer3.getId());
+            customerRepository.deleteById(customer3.getId());
             tx.commit();
         }
 
@@ -186,8 +182,8 @@ public class SpringCustomerRepositoryTest {
 
     @Test
     public void testFindCustomerById() {
-        Customer customer;
-        customer = customerRepository.findOne(customer1.getId());
+        Optional<Customer> customer;
+        customer = customerRepository.findById(customer1.getId());
         assertEquals(customer1, customer);
         assertTrue(entityStates.isDetached(customer));
     }
